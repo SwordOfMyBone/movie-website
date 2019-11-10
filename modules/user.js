@@ -2,7 +2,7 @@
 'use strict'
 
 const bcrypt = require('bcrypt-promise')
-// const fs = require('fs-extra')
+const fs = require('fs-extra')
 const mime = require('mime-types')
 const sqlite = require('sqlite-async')
 const saltRounds = 10
@@ -13,8 +13,8 @@ module.exports = class User {
 		return (async() => {
 			this.db = await sqlite.open(dbName)
 			// we need this table to store the user accounts
-			const sql = 'CREATE TABLE IF NOT EXISTS "users" ( "id" INTEGER PRIMARY KEY AUTOINCREMENT, "pass" TEXT, "user" TEXT );' + 'CREATE TABLE IF NOT EXISTS "card_details" ( "Card number" INTEGER, "Expiry Date" TEXT, "Security Code" INTEGER, "user" INTEGER, PRIMARY KEY("Card number"), FOREIGN KEY("user") REFERENCES "users"("user") );'
-			console.log(sql)
+			const sql = 'CREATE TABLE IF NOT EXISTS "users" ( "id" INTEGER PRIMARY KEY AUTOINCREMENT, "pass" TEXT, "user" TEXT );' + 
+			'CREATE TABLE IF NOT EXISTS "card_details" ( "Card number" INTEGER, "Expiry Date" TEXT, "Security Code" INTEGER, "id" INTEGER, PRIMARY KEY("Card number"), FOREIGN KEY("id") REFERENCES "users"("id") );'
 			await this.db.run(sql)
 			return this
 		})()
@@ -26,13 +26,21 @@ module.exports = class User {
 			if(pass.length === 0) throw new Error('missing password')
 
 			//check for optional args
-			if(cNumber != null && expiry != null && secCode != null){
+			if(cNumber !== null && expiry !== null && secCode !== null) {
+				console.log('if statement ran')
 				let sql = `SELECT COUNT(id) as records FROM users WHERE user="${user}";`
 				const data = await this.db.get(sql)
 				if(data.records !== 0) throw new Error(`username "${user}" already in use`)
 				pass = await bcrypt.hash(pass, saltRounds)
-				sql = `INSERT INTO users(user, pass) VALUES("${user}", "${pass}");` + 
-				`INSERT INTO card_details("Card number", "Expiry Date", "Security Code", user) VALUES("${cNumber}","${expiry}}","${secCode}","${user}")`
+				sql = `INSERT INTO users(user, pass) VALUES("${user}", "${pass}");`
+				await this.db.run(sql)
+				sql = `SELECT * FROM users WHERE user="${user}";`
+				let id = ''
+				await this.db.each(sql,( err, row) => {
+					if(err) console.error(err.message)
+					if(!err) id = row.id
+				})
+				sql = `INSERT INTO card_details("Card number", "Expiry Date", "Security Code", id) VALUES("${cNumber}","${expiry}}","${secCode}","${id}")`
 				await this.db.run(sql)
 				return true
 			}
@@ -53,12 +61,11 @@ module.exports = class User {
 	}
 
 
-
 	async uploadPicture(path, mimeType) {
 		const extension = mime.extension(mimeType)
 		console.log(`path: ${path}`)
 		console.log(`extension: ${extension}`)
-		//await fs.copy(path, `public/avatars/${username}.${fileExtension}`)
+		await fs.copy(path, `public/avatars/${username}.${fileExtension}`)
 	}
 
 	async login(username, password) {

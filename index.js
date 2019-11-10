@@ -5,7 +5,7 @@
 'use strict'
 
 /* MODULE IMPORTS */
-const Koa = require('koa');
+const Koa = require('koa')
 const Router = require('koa-router')
 const views = require('koa-views')
 const staticDir = require('koa-static')
@@ -16,7 +16,6 @@ const session = require('koa-session')
 
 /* IMPORT CUSTOM MODULES */
 const User = require('./modules/user')
-
 
 
 const app = new Koa()
@@ -31,7 +30,7 @@ app.use(views(`${__dirname}/views`, { extension: 'handlebars' }, {map: { handleb
 
 const defaultPort = 8080
 const port = process.env.PORT || defaultPort 
-const dbName = 'website.db'	
+const dbName = 'website.db'
 
 /**
  * The secure home page.
@@ -42,7 +41,7 @@ const dbName = 'website.db'
  */
 router.get('/', async ctx => {
 	try {
-//		if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
+		if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
 		const data = {}
 		if(ctx.query.msg) data.msg = ctx.query.msg
 		await ctx.render('index')
@@ -75,9 +74,10 @@ router.post('/register', koaBody, async ctx => {
 		// Check for optional input fields, if card info is entered add it to user register params.
 		if(body['card number'].length != 0 && body.expiry.length != 0 && body['security code'].length !=0){
 			await user.register(body.user, body.pass, body['card number'], body.expiry, body['security code'])
+			await user.uploadPicture(body.path, body.type)
 		}
 		else {await user.register(body.user, body.pass)}
-		// await user.uploadPicture(path, type)
+		await user.uploadPicture(body.path, body.type)
 		// redirect to the home page
 		ctx.redirect(`/?msg=new user "${body.name}" added`)
 	} catch(err) {
