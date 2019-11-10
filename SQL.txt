@@ -1,0 +1,20 @@
+	let sql = 'CREATE TABLE IF NOT EXISTS Card_details(Card_id INT(10) PRIMARY KEY NOT NULL, cardType VARCHAR(15) NOT NULL, cardNumber VARCHAR(20) NOT NULL, expiryMonth VARCHAR(20) NOT NULL, expiryYear INT(4) NOT NULL, threeNumberOnBack INT(3) NOT NULL, CustomerID INT(5) REFERENCES Customers(Cust_id) NOT NULL)'
+	db.run(sql)
+
+	sql = 'CREATE TABLE IF NOT EXISTS Customers(Cust_id INTEGER PRIMARY KEY AUTOINCREMENT, FirstName VARCHAR(20) NOT NULL, LastName VARCHAR(20) NOT NULL, Gender VARCHAR(6) NOT NULL, Address VARCHAR(50) NOT NULL, Post_code VARCHAR(7) NOT NULL, Birth_date DATE NOT NULL, Phone_number INT(20) NOT NULL, Email VARCHAR(40) NOT NULL, Password VARCHAR(20) NOT NULL,RPassword VARCHAR(20) NOT NULL, Picture VARCHAR(25))'
+	db.run(sql)
+
+	sql = 'CREATE TABLE IF NOT EXISTS MovieDisplayRoom(DisplayRoom INT(2) Primary Key NOT NULL, NumberOfSeats VARCHAR(3) NOT NULL)'
+	db.run(sql)
+
+	sql = 'CREATE TABLE IF NOT EXISTS Movies(Movie VARCHAR(30) Primary Key NOT NULL, Poster LONGBLOB NOT NULL, Details VARCHAR(200) NOT NULL)'
+	db.run(sql)
+
+	sql = 'CREATE TABLE IF NOT EXISTS PaymentReference(ReferenceNumber INT(10) PRIMARY KEY NOT NULL, TicketID INT(5) REFERENCES Tickets(Ticket_id) NOT NULL, CustomerID INT(5) REFERENCES Customers(Cust_id) NOT NULL, CardID INT(10) REFERENCES Card_details(card_id) NOT NULL)'	
+	db.run(sql)
+	
+	sql = 'CREATE TABLE IF NOT EXISTS Showing_schedule(ShowNumber VARCHAR(8) PRIMARY KEY NOT NULL,Date DATE NOT NULL, Time VARCHAR(7) NOT NULL, movie VARCHAR(30) REFERENCES Movies(Movie) NOT NULL, roomnumber INT(2) REFERENCES MovieDisplayRoom(DisplayRoom))'
+	db.run(sql)
+
+	sql = 'CREATE TABLE IF NOT EXISTS Tickets(Ticket_id INT(5) PRIMARY KEY NOT NULL, Quantity_of_tickets INT(15) NOT NULL, Shownumber VARCHAR(8) REFERENCES Showing_schedule(ShowNumber) NOT NULL)'
+	db.run(sql)
