@@ -105,5 +105,20 @@ router.get('/logout', async ctx => {
 	ctx.redirect('/?msg=you are now logged out')
 })
 
+router.get('/production', async ctx => {
+	ctx.session.authorised = true
+	ctx.redirect('/?msg=you can now select a production')
+	try{
+		let RetrieveData =`SELECT production, dates FROM ProductionTable`
+		const production = await this.db.get(sql)
+	}
+	catch(err){
+		await ctx.render('error',{message: err.message})
+	} //should be something like this well have to test 
+	//after the database has been successfuly fixed/created
+})
+
+
+
 app.use(router.routes())
 module.exports = app.listen(port, async() => console.log(`listening on port ${port}`))
