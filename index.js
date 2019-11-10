@@ -33,6 +33,18 @@ const defaultPort = 8080
 const port = process.env.PORT || defaultPort 
 const dbName = 'website.db'	
 
+
+
+router.get('/home', async ctx => await ctx.render('homePage'))
+router.get('/contact', async ctx => await ctx.render('Contactpage'))
+router.get('/booking', async ctx => await ctx.render('Bookingpage'))
+router.get('/login', async ctx => await ctx.render('login'))
+router.get('/signup', async ctx => await ctx.render("SignUp"))
+router.get('/support', async ctx => await ctx.render("support"))
+router.get('/payment', async ctx => await ctx.render("payment"))
+router.get('/production', async ctx=> await ctx.render("Production"))
+
+
 /**
  * The secure home page.
  *
@@ -109,5 +121,17 @@ router.get('/logout', async ctx => {
 	ctx.redirect('/?msg=you are now logged out')
 })
 
+router.get('/production', async ctx => {
+	ctx.session.authorised = true
+	ctx.redirect('/?msg=you can now select a production')
+	try{
+		let RetrieveData =`SELECT production, dates FROM ProductionTable`
+		const production = await this.db.get(sql)
+	}
+	catch(err){
+		await ctx.render('error',{message: err.message})
+	} //should be something like this well have to test 
+	//after the database has been successfuly fixed/created
+})
 app.use(router.routes())
 module.exports = app.listen(port, async() => console.log(`listening on port ${port}`))
