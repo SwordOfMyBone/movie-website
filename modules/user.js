@@ -13,27 +13,46 @@ module.exports = class User {
 		return (async() => {
 			this.db = await sqlite.open(dbName)
 			// we need this table to store the user accounts
-			const sql = 'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, user TEXT, pass TEXT);'
+			const sql = 'CREATE TABLE IF NOT EXISTS "users" ( "id" INTEGER PRIMARY KEY AUTOINCREMENT, "pass" TEXT, "user" TEXT );' + 'CREATE TABLE IF NOT EXISTS "card_details" ( "Card number" INTEGER, "Expiry Date" TEXT, "Security Code" INTEGER, "user" INTEGER, PRIMARY KEY("Card number"), FOREIGN KEY("user") REFERENCES "users"("user") );'
+			console.log(sql)
 			await this.db.run(sql)
 			return this
 		})()
 	}
 
-	async register(user, pass) {
+	async register(user, pass, cNumber = null, expiry = null, secCode = null) {
 		try {
 			if(user.length === 0) throw new Error('missing username')
 			if(pass.length === 0) throw new Error('missing password')
-			let sql = `SELECT COUNT(id) as records FROM users WHERE user="${user}";`
-			const data = await this.db.get(sql)
-			if(data.records !== 0) throw new Error(`username "${user}" already in use`)
-			pass = await bcrypt.hash(pass, saltRounds)
-			sql = `INSERT INTO users(user, pass) VALUES("${user}", "${pass}")`
-			await this.db.run(sql)
-			return true
+
+			//check for optional args
+			if(cNumber != null && expiry != null && secCode != null){
+				let sql = `SELECT COUNT(id) as records FROM users WHERE user="${user}";`
+				const data = await this.db.get(sql)
+				if(data.records !== 0) throw new Error(`username "${user}" already in use`)
+				pass = await bcrypt.hash(pass, saltRounds)
+				sql = `INSERT INTO users(user, pass) VALUES("${user}", "${pass}");` + 
+				`INSERT INTO card_details("Card number", "Expiry Date", "Security Code", user) VALUES("${cNumber}","${expiry}}","${secCode}","${user}")`
+				await this.db.run(sql)
+				return true
+			}
+
+			else{
+				let sql = `SELECT COUNT(id) as records FROM users WHERE user="${user}";`
+				const data = await this.db.get(sql)
+				if(data.records !== 0) throw new Error(`username "${user}" already in use`)
+				pass = await bcrypt.hash(pass, saltRounds)
+				sql = `INSERT INTO users(user, pass) VALUES("${user}", "${pass}")`
+				await this.db.run(sql)
+				return true
+			}
+
 		} catch(err) {
 			throw err
 		}
 	}
+
+
 
 	async uploadPicture(path, mimeType) {
 		const extension = mime.extension(mimeType)

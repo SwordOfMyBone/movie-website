@@ -42,7 +42,7 @@ const dbName = 'website.db'
  */
 router.get('/', async ctx => {
 	try {
-		if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
+//		if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
 		const data = {}
 		if(ctx.query.msg) data.msg = ctx.query.msg
 		await ctx.render('index')
@@ -72,7 +72,11 @@ router.post('/register', koaBody, async ctx => {
 		console.log(body)
 		// call the functions in the module
 		const user = await new User(dbName)
-		await user.register(body.user, body.pass)
+		// Check for optional input fields, if card info is entered add it to user register params.
+		if(body['card number'].length != 0 && body.expiry.length != 0 && body['security code'].length !=0){
+			await user.register(body.user, body.pass, body['card number'], body.expiry, body['security code'])
+		}
+		else {await user.register(body.user, body.pass)}
 		// await user.uploadPicture(path, type)
 		// redirect to the home page
 		ctx.redirect(`/?msg=new user "${body.name}" added`)
@@ -88,7 +92,7 @@ router.get('/login', async ctx => {
 	await ctx.render('login', data)
 })
 
-router.post('/login', async ctx => {
+router.post('/login', async ctx => {	
 	try {
 		const body = ctx.request.body
 		const user = await new User(dbName)
