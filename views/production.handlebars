@@ -10,6 +10,9 @@
 <!-- Here we should be using handelbars to show the productions from the database
 as well as the dates for it
 -->
+{{#each production}}
+{{productionName} {productionDate} {SeatsAvailable}}
+{{/each}}
 </form>
 
 </body>
