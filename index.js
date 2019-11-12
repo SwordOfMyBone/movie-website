@@ -53,13 +53,6 @@ router.get('/home', async ctx => {
 	}
 })
 
-router.get('/contact', async ctx => await ctx.render('Contactpage'))
-router.get('/booking', async ctx => await ctx.render('Bookingpage'))
-router.get('/login', async ctx => await ctx.render('login'))
-router.get('/signup', async ctx => await ctx.render('SignUp'))
-router.get('/support', async ctx => await ctx.render('support'))
-router.get('/payment', async ctx => await ctx.render('payment'))
-router.get('/production', async ctx => await ctx.render('Production'))
 
 // logout button redirect to end session; add as href to all logout buttons on page
 router.get('/logout', async ctx => {
@@ -85,6 +78,7 @@ router.get('/', async ctx => {
 		if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
 		const data = {}
 		if(ctx.query.msg) data.msg = ctx.query.msg
+		console.log(ctx.session.authorised)
 		await ctx.render('index')
 	} catch(err) {
 		await ctx.render('error', {message: err.message})
@@ -159,16 +153,22 @@ router.post('/login', async ctx => {
 
 router.get('/logout', async ctx => {
 	ctx.session.authorised = null
+	console.log("Logged OUT")
 	ctx.redirect('/?msg=you are now logged out')
+	
 })
 
 router.get('/production', async ctx => {
 	try {
-		if (ctx.session.authorized === true) {
-			ctx.redirect('/production')
-			sql = 'SELECT production, dates FROM ProductionTable'
-			data = await this.db.get(sql)
+		console.log("1")
+		if (ctx.session.authorised !== true) {
+			console.log("2")
+			ctx.redirect('/login')
+			//sql = 'SELECT production, dates FROM ProductionTable'
+			//data = await this.db.get(sql)
+		
 		}
+		
 	} catch (err) {
 		await ctx.render('login', { message: err.message })
 	} // Will check if the session is open then it will direct the user
