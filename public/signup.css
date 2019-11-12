@@ -53,7 +53,6 @@ body {
     
   }
   
-  
   .navigation {
     text-align: center;
     list-style-type: none;
@@ -66,7 +65,7 @@ body {
     color: white;
     text-decoration: none;
     font-weight: bold;
-    margin: 20px;
+    margin: 2px;
     text-align: center;
     font-size: 14px;
 
@@ -90,73 +89,20 @@ body {
     color: orange;
   }
  
-
-.intocuh
- {
-	display: block;
-	color: white;
-	text-align: center;
-	padding: 40px 16px;
-    text-decoration: none;
-    font-family: baloo;
-    font-size: 5rem;
-    text-decoration: underline;
-  }
-
-  .form{
-    font-family: baloo;
-    position:absolute;
-    width:100px;
-    height:100px;
-    left:50%;
-    top:50%;
-    margin-left:-75px;
-    margin-top:-90px;
-  }
-  
-.h2{
-font-size: 5rem;
-}
-
-.signup{
-  background-color: rgb(58, 88, 59); /* Green */
-  border: none;
-  color: white;
-  padding: 8px 16px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  -webkit-transition-duration: 0.4s; 
-  transition-duration: 0.4s;
-  cursor: pointer;
-}
-.signup{
-  background-color: rgb(126, 124, 124); 
-  color: black; 
-  border: 2px solid rgb(189, 155, 43);
-}
-.signup:hover {
-  background-color: rgb(161, 159, 9);
-  color: white;
-}
-
-.footer {
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  text-align: center;
-}
-
-.logo {
-  
-
-  display: block;
+  .logo {
+    display: block;
   margin-left: auto;
   margin-right: auto;
   width: 10%;
   height: auto;
   margin-top: 50px;
-}
+
+  }
+
+  .footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+  }
