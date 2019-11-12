@@ -54,6 +54,8 @@ router.get('/home', async ctx => {
 })
 
 router.get('/support', async ctx => await ctx.render("support"))
+router.get('/production', async ctx => await ctx.render("production"))
+
 
 // logout button redirect to end session; add as href to all logout buttons on page
 router.get('/logout', async ctx => {
