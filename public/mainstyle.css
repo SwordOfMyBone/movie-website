@@ -1,0 +1,168 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body,
+.home {
+  font-family: baloo;
+  font-size: 1.45em;
+  background-size: 120px 60px;
+}
+
+.home {
+  background: black;
+}
+
+nav {
+  overflow: hidden;
+  position: fixed;
+  background: black;
+  top: 0px;
+  width: 100%;
+  left: 0px;
+  padding-bottom: 2px;
+  transition: color 1s;
+}
+
+.navbar:hover {
+  color: orange;
+}
+
+.navigation1 {
+  text-align: center;
+  list-style-type: none;
+  display: inline;
+  font-weight: bolder;
+  text-decoration: none;
+  border-radius: 15px;
+  padding: 0px;
+  display: inline-block;
+  float: right;
+}
+
+.navigation {
+  text-align: center;
+  list-style-type: none;
+  display: inline-block;
+  font-weight: bolder;
+  text-decoration: none;
+}
+
+.navbar {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  margin: 20px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.login {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  padding-left: 6px;
+  padding-right: 6px;
+  margin-right: 10px;
+  text-align: center;
+  font-size: 20px;
+  font-size: 22px;
+
+  transition: color 1s;
+}
+
+.login:hover {
+  color: orange;
+}
+
+.name {
+  color: white;
+  text-align: center;
+  font-size: 120px;
+  font-weight: bolder;
+  padding-top: 10rem;
+  margin-bottom: 5%;
+  animation: transitionIn 2s;
+}
+
+.contain1 {
+  display: inline-block;
+  text-align: center;
+  margin-right: auto;
+  margin-left: auto;
+  width: 100%;
+  margin-bottom: 15%;
+}
+
+.contbutton1 {
+  border: 0;
+  font-size: 1.5rem;
+  padding: 0.5rem 1.5rem;
+  cursor: pointer;
+  background-size: 300%;
+  transition: background-color 1s;
+  border-radius: 10px;
+  color: white;
+  background-color: black;
+  border: 2px solid white;
+  font-family: baloo;
+}
+
+.contbutton1:hover {
+  background-color: white;
+  color: black;
+}
+
+.caption {
+  color: white;
+  text-align: center;
+  margin-bottom: 5%;
+}
+
+@keyframes transitionIn {
+  from {
+    opacity: 0;
+    transform: translateX(-40);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.title {
+  text-align: center;
+  margin-top: 40px;
+  text-decoration: orange underline;
+}
+
+.moviename,
+.time {
+  display: inline-block;
+  text-decoration: orange underline;
+  margin-right: 25%;
+}
+
+img {
+  display: block;
+}
+<<<<<<< HEAD
+
+=======
+>>>>>>> 425d8beb9a97970a87387ea030ed0baadb252b4c
+
+.logo {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 10%;
+  height: auto;
+}
+

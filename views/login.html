@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <link rel="stylesheet" type="text/css" href="login.css">
+    <head>
+            <link rel="shortcut icon" type="image/x-ico" href="img\favicon.ico"/>
+
+            <nav>
+                    <ul>
+                      <li class="navigation">
+                        <a class="navbar" href="#scroll">Home</a>
+                          </a>
+                      </li>
+                      <li class="navigation">
+                        <a class="navbar" href="#scroll2">Now Playing</a>
+                      </li>
+                      <li class="navigation">
+                        <a class="navbar" href="/support">Contact</a>
+                      </li>
+                      <li class="navigation1">
+                        <a class="login" href="/login">Log in</a>
+                      </li>
+                    </ul>
+                  </nav>
+        <h2>Login here</h2>
+        <body>
+            <form action='/loginForm' class="form" method='post'>
+                Username: <br>
+                <input type="text" name="username" placeholder="Enter your username here" required>
+                <br><br>
+                Password: <br>
+                <input type="password" name="password" placeholder="*********" required>
+                <br><br>
+                <input type="submit" value="submit">Login</input>
+                <br>
+                <h2>Don't have an account? Sign up here</h2>
+                <button><a href="http://localhost:8080/Signup">Sign Up</a></button><br><br>
+                <button><a href="http://localhost:8080/">Home</a></button>
+            </form>
+        </body>
+    </head>
+</html>

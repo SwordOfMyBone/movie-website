@@ -1,0 +1,87 @@
+body {
+    margin-bottom:50px;
+      width: 100%;
+      height: 100vh;
+      font-family: "Exo", sans-serif;
+      color: #fff;
+      background: linear-gradient(-45deg, #000000, #022507, #084e49, #2f1d57);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+   }
+   nav {
+    overflow: hidden;
+    position: fixed;
+    background: black;
+    top: 0px;
+    width: 100%;
+    left: 0px;
+    padding-bottom: 2px;
+    transition: color 1s;
+  }
+  
+  .navbar:hover {
+    color: orange;
+  }
+  
+  .navigation1 {
+    text-align: center;
+    list-style-type: none;
+    display: inline;
+    font-weight: bolder;
+    text-decoration: none;
+    border-radius: 15px;
+    padding: 0px;
+    display: inline-block;
+    float: right;
+    
+  }
+  
+  
+  .navigation {
+    text-align: center;
+    list-style-type: none;
+    display: inline-block;
+    font-weight: bolder;
+    text-decoration: none;
+  }
+  
+  .navbar {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 20px;
+    text-align: center;
+    font-size: 14px;
+
+  }
+
+  .login  {
+    width: 120px;
+       height: 28px;
+       border: 1px solid rgb(246, 131, 0);
+       background: rgb(255, 255, 255);
+       text-align: center;
+       color: rgb(3, 3, 3);
+       border-radius:  5px 5px ;
+       font-size: 20px;
+       background-position: right;
+       float:right;
+ } 
+  
+  .login:hover {
+    color: orange;
+ }
+
+.intocuh
+ {
+	display: block;
+	color: white;
+	text-align: center;
+	padding: 40px 16px;
+    text-decoration: none;
+    font-family: baloo;
+    font-size: 5rem;
+    text-decoration: underline;
+  }
+
+  

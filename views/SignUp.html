@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="Allcss.css">
+        <h2>Sign up</h2>
+        <body>
+            <form action='/signupForm' method='post'>
+                <fieldset>
+                
+                <label for="First Name"><b>First Name: <b></label>
+                <input type="text" placeholder="Enter your first name" name="firstname" required>
+                <br><br>
+                <label for="Last Name"><b>Last Name: <b></label>
+                <input type="text" placeholder="Enter your last name" name="lastname" required>
+                <br><br>
+                <label for="Gender:"><b>Gender: <b></label>
+                <input type="text" placeholder="Male/Female" name="gender" required>
+                <br><br>
+                <label for="Address"><b>Address: <b></label>
+                <input type="text"  name="address" required>
+                <br><br>
+                <label for="Post Code:"><b>Post code: <b></label>
+                <input type="text" placeholder="e.g. CV5 1AP" name="postcode" required>
+                <br><br>
+                <label for="Birth Date:"><b>Birth Date: <b></label>
+                <input type="date" name="birthdate" required>
+                <br><br>
+                <label for="Number"><b>Phone Number<b></label>
+                <input type="text" placeholder="Enter your phone number" name="phoneNumber" required>
+                <br><br>
+                <label for="Email"><b>Email:<b></label>
+                <input type="text" placeholder="Enter your Email" name="Email" required>
+                <br><br>
+                <label for="Password"><b>Password<b></label>
+                <input type="Password" placeholder="**********" name="password" required>
+                <br><br>
+                <label for="RepeatPassword"><b>Repeat Password<b></label>
+                <input type="Password" name="Repeatpassword" required>
+                <br><br>
+                <input  type="submit" value="submit"> Create Account</input><br><br>
+                <button><a href="http://localhost:8080/login">Login</a></button>
+                <br><br>
+                <button><a href="http://localhost:8080/home">Home</a></button>
+            </fieldset>
+            </form>
+        </body>
+    </head>
+</html>

@@ -12,10 +12,17 @@
 	<body>
 		<h1>Create an Account</h1>
 		<form action="/register" enctype="multipart/form-data" method="post">
-			<p>Username:<br /><input type="text" name="user" placeholder="your preferred username (no spaces)" value=""></p>
-            <p>Password:<br /><input type="password" name="pass" placeholder="your chosen password" value=""></p>
+			<p>Username:<br /><input type="text" name="user" placeholder="your preferred username (no spaces)" value="" required></p>
+            <p>Password:<br /><input type="password" name="pass" placeholder="your chosen password" value="" required></p>
+            <fieldset>
+            <p>CreditCard number:<br /><input type="text" name="card number" value=""></p>
+            <p>Expiry date:<br /><input type="date" name="expiry" value=""></p>
+            <p>Security code:<br /><input type="text" name="security code" value=""></p>
+            </fieldset>
 			<p>Profile Picture:<br /><input type="file" name="avatar"></p>
 			<p><input type="submit" value="Create"></p>
 		</form>
+		<p>Got an account <button><a href="http://localhost:8080/login">Login</a></button></p>
+		<button><a href="/home">Home</a></button>
 	</body>
 </html>
