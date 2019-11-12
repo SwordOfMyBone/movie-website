@@ -1,13 +1,30 @@
-body {
-    margin-bottom:50px;
-      width: 100%;
-      height: 100vh;
-      font-family: "Exo", sans-serif;
-      color: #fff;
-      background: linear-gradient(-45deg, #000000, #022507, #084e49, #2f1d57);
-      background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
-   }
+ body {
+	margin: 0;
+	width: 100%;
+	height: 100vh;
+	font-family: "Exo", sans-serif;
+	color: #fff;
+	background: linear-gradient(-45deg, #000000, #443f41, #585755, #c0bcb3);
+	background-size: 400% 400%;
+	animation: gradientBG 15s ease infinite;
+}
+
+@keyframes gradientBG {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+
+
+
+
    nav {
     overflow: hidden;
     position: fixed;
@@ -56,17 +73,19 @@ body {
   }
 
   .login  {
-    width: 120px;
-       height: 28px;
-       border: 1px solid rgb(246, 131, 0);
-       background: rgb(255, 255, 255);
-       text-align: center;
-       color: rgb(3, 3, 3);
-       border-radius:  5px 5px ;
-       font-size: 20px;
-       background-position: right;
-       float:right;
- } 
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding-left: 6px;
+    padding-right: 6px;
+    margin-right: 10px;
+    text-align: center;
+    font-size: 22px;
+    font-family: baloo;
+    transition: color 1s;
+  }
+
+ 
   
   .login:hover {
     color: orange;
@@ -78,10 +97,44 @@ body {
 	color: white;
 	text-align: center;
 	padding: 40px 16px;
-    text-decoration: none;
-    font-family: baloo;
-    font-size: 5rem;
+  text-decoration: none;
+  font-family: baloo;
+    font-size: 3rem;
     text-decoration: underline;
+    text-shadow: 3px 2px rgb(255, 145, 0);
+    font-family: "Times New Roman";
+    font-style: oblique;
+
   }
 
   
+.logo {
+
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 10%;
+  height: auto;
+  margin-top: 50px;
+  
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.helpteam{
+  text-align: center;
+  position: static;
+  border: 3px solid rgb(255, 255, 255);
+
+}
+.locateus{
+  text-align: center;
+  position: static;
+  border: 3px solid rgb(255, 255, 255);
+}
