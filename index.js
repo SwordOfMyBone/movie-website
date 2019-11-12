@@ -118,6 +118,9 @@ router.get('/production', async ctx => {
 	//after the database has been successfuly fixed/created
 })
 
+router.get('/payment', async ctx => await ctx.render('payment'))
+router.get('/payment_complete', async ctx => await ctx.render('payment_complete'))
+
 
 
 app.use(router.routes())

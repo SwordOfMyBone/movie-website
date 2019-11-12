@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <link href="style.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+ <h1>Checkout</h1>
+    <form>
+        <input type="radio" name="payment method" value="VISA" checked>VISA<br>
+        <input type="radio" name="payment method" value="MasterCard">MasterCard
+    </form>
+    <h3>Payment details</h3>
+    <br><br>
+    <form>
+        Card Number:<br>
+        <input type="text" name="Card Number"><br><br>
+        Expiry date:<br>
+        <input type="text" name="Expiry date month" size="1">/
+        <input type="text" name="Expiry date year" size="1"><br><br>
+        CVV code:<br>
+        <input type="text" name="CVV code" size="1"><br><br>
+        <a href="/payment_complete"><button type="submit">Submit</button></a>
+        <a href="/production"><button type="button">Back home</button></a>
+    </form>
+
+</body>
