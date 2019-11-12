@@ -162,7 +162,6 @@ router.get('/logout', async ctx => {
 })
 
 router.get('/production', async ctx => {
-<<<<<<< HEAD
 	ctx.session.authorised = true
 	ctx.redirect('/?msg=you can now select a production')
 	try{
@@ -173,22 +172,6 @@ router.get('/production', async ctx => {
 		await ctx.render('error',{message: err.message})
 	} //should be something like this well have to test 
 	//after the database has been successfuly fixed/created
-=======
-	try {
-		console.log("1")
-		if (ctx.session.authorised !== true) {
-			console.log("2")
-			ctx.redirect('/login')
-			//sql = 'SELECT production, dates FROM ProductionTable'
-			//data = await this.db.get(sql)
-		
-		}
-		
-	} catch (err) {
-		await ctx.render('login', { message: err.message })
-	} // Will check if the session is open then it will direct the user
-	//to production, if session isn't open it will ask the user to log in
->>>>>>> f9346cd78329292b347e2c834d9a4eda05300541
 })
 
 
