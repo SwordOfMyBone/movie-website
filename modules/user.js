@@ -13,7 +13,7 @@ module.exports = class User {
 		return (async() => {
 			this.db = await sqlite.open(dbName)
 			// we need this table to store the user accounts
-			const sql = 'CREATE TABLE IF NOT EXISTS "users" ( "id" INTEGER PRIMARY KEY AUTOINCREMENT, "pass" TEXT, "user" TEXT );' + 
+			const sql = 'CREATE TABLE IF NOT EXISTS "users" ( "id" INTEGER PRIMARY KEY AUTOINCREMENT, "pass" TEXT, "user" TEXT );' +
 			'CREATE TABLE IF NOT EXISTS "card_details" ( "Card number" INTEGER, "Expiry Date" TEXT, "Security Code" INTEGER, "id" INTEGER, PRIMARY KEY("Card number"), FOREIGN KEY("id") REFERENCES "users"("id") );'
 			await this.db.run(sql)
 			return this
@@ -43,9 +43,7 @@ module.exports = class User {
 				sql = `INSERT INTO card_details("Card number", "Expiry Date", "Security Code", id) VALUES("${cNumber}","${expiry}}","${secCode}","${id}")`
 				await this.db.run(sql)
 				return true
-			}
-
-			else{
+			} else{
 				let sql = `SELECT COUNT(id) as records FROM users WHERE user="${user}";`
 				const data = await this.db.get(sql)
 				if(data.records !== 0) throw new Error(`username "${user}" already in use`)
