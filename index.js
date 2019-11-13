@@ -58,7 +58,7 @@ router.get('/booking', async ctx => await ctx.render('Bookingpage'))
 router.get('/login', async ctx => await ctx.render('login'))
 router.get('/signup', async ctx => await ctx.render('SignUp'))
 router.get('/support', async ctx => await ctx.render('support'))
-//router.get('/payment', async ctx => await ctx.render('payment'))
+router.get('/payment', async ctx => await ctx.render('payment'))
 router.get('/production', async ctx => await ctx.render('Production'))
 router.get('/payment_complete', async ctx => await ctx.render('payment_complete'))
 
@@ -86,6 +86,7 @@ router.get('/', async ctx => {
 		if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
 		const data = {}
 		if(ctx.query.msg) data.msg = ctx.query.msg
+		console.log(ctx.session.authorised)
 		await ctx.render('index')
 	} catch(err) {
 		await ctx.render('error', {message: err.message})
@@ -131,7 +132,7 @@ router.post('/register', koaBody, async ctx => {
 		} else {
 			await user.register(body.user, body.pass)
 		}
-		// await user.uploadPicture(path, type)
+		await user.uploadPicture(ctx.request.files.avatar, body.user);
 		// redirect to the home page
 		ctx.redirect(`/?msg=new user "${body.name}" added`)
 	} catch (err) {
@@ -160,7 +161,9 @@ router.post('/login', async ctx => {
 
 router.get('/logout', async ctx => {
 	ctx.session.authorised = null
+	console.log("Logged OUT")
 	ctx.redirect('/?msg=you are now logged out')
+	
 })
 
 router.post('/payment', koaBody, async ctx => {
