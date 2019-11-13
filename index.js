@@ -13,6 +13,7 @@ const staticDir = require('koa-static')
 const bodyParser = require('koa-bodyparser')
 const koaBody = require('koa-body')({multipart: true, uploadDir: '.'})
 const session = require('koa-session')
+const database = require('sqlite-async')
 //const jimp = require('jimp')
 
 /* IMPORT CUSTOM MODULES */
@@ -63,11 +64,7 @@ router.get('/logout', async ctx => {
 	ctx.redirect('/home')
 })
 
-// just testing sessions since we dont have the DB ready yet so i cant do this with user login, when you go onto /test it automatically logs you in and removes the log in button from home page and replaces with MyProfile button
-router.get('/test', ctx => {
-	ctx.session.authorised = true
-	ctx.redirect('/home')
-})
+
 
 /**
  * The secure home page.
@@ -148,7 +145,7 @@ router.post('/login', async ctx => {
 		const user = await new User(dbName)
 		await user.login(body.user, body.pass)
 		ctx.session.authorised = true
-		return ctx.redirect('/?msg=you are now logged in...')
+		return ctx.redirect('/?msg=you are now logged in...', body.user)
 	} catch (err) {
 		await ctx.render('error', { message: err.message })
 	}
@@ -177,6 +174,31 @@ router.get('/production', async ctx => {
 	} // Will check if the session is open then it will direct the user
 	//to production, if session isn't open it will ask the user to log in
 })
+
+
+/*
+// semi complete, pushing because i wanna switch devices
+router.get('/myprofile', async ctx => {
+	const test = "hsharif11"
+	const sql = `SELECT user FROM users WHERE user="${test}"`
+	const db = await database.open(dbName)
+	const name = await db.get(sql);
+	
+	let picture = `./avatars/${test}.jpg`
+	console.log(picture);
+	await ctx.render('myprofile', {sessionActive: ctx.session.authorised,
+	name: name.user,
+	imgUrl: picture
+	})
+})
+
+router.post('/myprofile', async ctx => {
+	
+	
+	ctx.redirect("myprofile")
+})
+
+*/
 
 app.use(router.routes())
 module.exports = app.listen(port, async() =>
