@@ -4,6 +4,7 @@
 <html lang="en">
 
 		<link href="register.css" type="text/css" rel="stylesheet" />
+	<img src="img\lion.png" class="logo"alt ="images of logo"/>
 
 
 	<head>
@@ -13,8 +14,8 @@
 		<meta name="author" content="Mark Tyers">
 		<link href="style.css" type="text/css" rel="stylesheet" />
 	</head>
+
 	<body>
-		<h1>Create an Account</h1>
 		<form  class="form"      action="/register" enctype="multipart/form-data" method="post">
 			<p>Username:<br /><input type="text" name="user" placeholder="your preferred username (no spaces)" value="" required></p>
             <p>Password:<br /><input type="password" name="pass" placeholder="your chosen password" value="" required></p>
@@ -26,7 +27,15 @@
 			<p>Profile Picture:<br /><input type="file" name="avatar"></p>
 			<p><input type="submit" value="Create"></p>
 		</form>
-		<p>Got an account <button><a href="http://localhost:8080/login">Login</a></button></p>
-		<button><a href="/home">Home</a></button>
+
+<section class="form2">
+			<h3>Create an Account</h3>
+						<button><a class="button" href="/home">Home</a></button>
+
+		<p>Got an account <button><a class="button" href="http://localhost:8080/login">Login</a></button></p>
+</section>
+	
+
 	</body>
+
 </html>
