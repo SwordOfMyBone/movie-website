@@ -5,55 +5,72 @@
 <link href="production.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
-<form action="/production" method="post">
 <p>Please select one of the following productions: </p>
 
 <p class="production"> Avatar</p>
 <img src="/img/Avatarr1.jpg" class="Images" alt="Avatar">
 <p>Display day &amp; time: </p>
-
-<input list="AvatarTimetable">
+<form action="/payment" method="post">
+<input name="movieTime" list="AvatarTimetable">
 <datalist id="AvatarTimetable">
-    <option value="03/12 3:30pm"></option>
-    <option value = "04/12 5:30pm"></option>
+    <option value="kdkjfkdj">
+    <option value="lol">
 </datalist>
-
-<p class="production"> Scary Movie</p>
-<img src="/img/ScaryMovie.jpg" class="Images" alt="Scary Movie">
-<p>Display day &amp; time: </p>
-
-<input list="DateAndTime">
-<datalist id="DateAndTime">
-    <option value="03/12 3:30pm"></option>
-    <option value = "04/12 5:30pm"></option>
-</datalist>
-
-<p class="production"> Scary Movie</p>
-<img src="/img/ScaryMovie.jpg" class="Images" alt="Scary Movie">
-<p>Display day &amp; time:</p>
-
-<input list="Scary2">
-<datalist id="Scary2">
-    <option value="05/12 3:30pm"></option>
-    <option value = "06/12 5:30pm"></option>
-</datalist>
-
-<p class="production"> Scary Movie</p>
-<img src="/img/ScaryMovie.jpg" class="Images" alt="Scary Movie">
-<p>Display day &amp; time:</p>
-<input list="Scary3">
-<datalist id="Scary3">
-    <option value="03/12 3:30pm"></option>
-    <option value = "04/12 5:30pm"></option>
-</datalist>
-<p class="production"> Scary Movie</p>
-<img src="/img/ScaryMovie.jpg" class="Images" alt="Scary Movie">
-<p>Display day &amp; time: </p>
-
-<input list="Scary3">
-<datalist id="Scary3">
-    <option value="05/12 3:30pm"></option>
-    <option value = "06/12 5:30pm"></option>
-</datalist>
+<input type="submit">
 </form>
+
+
+<p class="production"> Scary Movie</p>
+<img src="/img/ScaryMovie.jpg" class="Images" alt="Scary Movie">
+<p>Display day &amp; time: </p>
+<form action="/payment" method="post">
+<input name="movieTime" list="DateAndTime">
+<datalist id="DateAndTime">
+    <option value="03/12 3:30pm">
+    <option value="04/12 5:30pm">
+</datalist>
+<input type="submit">
+</form>
+
+<p class="production"> Scary Movie</p>
+<img src="/img/ScaryMovie.jpg" class="Images" alt="Scary Movie">
+<p>Display day &amp; time:</p>
+
+<form action="/payment" method="post">
+<input type="text" name="movieTime" list="Scary2">
+<datalist id="Scary2">
+    <option value="05/12 3:30pm">
+    <option value="06/12 5:30pm">
+</datalist>
+<input type="submit">
+</form>
+
+<p class="production"> Scary Movie</p>
+<img src="/img/ScaryMovie.jpg" class="Images" alt="Scary Movie">
+<p>Display day &amp; time:</p>
+<form action="/payment" method="post">
+<input name="movieTime" list="Scary3">
+<datalist id="Scary3">
+    <option value="03/12 3:30pm">
+    <option value="04/12 5:30pm">
+</datalist>
+<input type="submit">
+</form>
+
+<p class="production"> Scary Movie</p>
+<img src="/img/ScaryMovie.jpg" class="Images" alt="Scary Movie">
+<p>>Display day &amp; time: </p>
+
+<form action="/payment" method="post">
+<input name="movieTime" list="Scary3">
+<datalist id="Scary3">
+    <option value="05/12 3:30pm"></option>
+    <option value="06/12 5:30pm"></option>
+</datalist>
+<input type="submit">
+</form>
+
+
+<a href= "/home"><button class="contbutton1">Back to the homepage</button></a>
+
 </body>

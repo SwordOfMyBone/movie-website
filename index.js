@@ -23,7 +23,7 @@ const router = new Router()
 /* CONFIGURING THE MIDDLEWARE */
 app.keys = ['darkSecret']
 app.use(staticDir('public'))
-app.use(bodyParser())
+// app.use(bodyParser())
 app.use(session(app))
 app.use(
 	views(
@@ -58,8 +58,9 @@ router.get('/booking', async ctx => await ctx.render('Bookingpage'))
 router.get('/login', async ctx => await ctx.render('login'))
 router.get('/signup', async ctx => await ctx.render('SignUp'))
 router.get('/support', async ctx => await ctx.render('support'))
-router.get('/payment', async ctx => await ctx.render('payment'))
+//router.get('/payment', async ctx => await ctx.render('payment'))
 router.get('/production', async ctx => await ctx.render('Production'))
+router.get('/payment_complete', async ctx => await ctx.render('payment_complete'))
 
 // logout button redirect to end session; add as href to all logout buttons on page
 router.get('/logout', async ctx => {
@@ -162,6 +163,15 @@ router.get('/logout', async ctx => {
 	ctx.redirect('/?msg=you are now logged out')
 })
 
+router.post('/payment', koaBody, async ctx => {
+	try {
+		console.log(ctx.request.body)
+		const body = ctx.request.body
+		await ctx.render('payment', body)
+	} catch(err) {
+	    err.message
+    }})
+
 router.get('/production', async ctx => {
 	ctx.session.authorised = true
 	ctx.redirect('/?msg=you can now select a production')
@@ -174,10 +184,6 @@ router.get('/production', async ctx => {
 	} //should be something like this well have to test 
 	//after the database has been successfuly fixed/created
 })
-
-router.get('/payment', async ctx => await ctx.render('payment'))
-router.get('/payment_complete', async ctx => await ctx.render('payment_complete'))
-
 
 
 app.use(router.routes())
