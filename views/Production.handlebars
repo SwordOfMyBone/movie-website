@@ -2,10 +2,43 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+
 <link href="production.css" type="text/css" rel="stylesheet" />
+
+	<img src="img\lion.png" class="logo" alt="images of logo"/>
+
+	<nav>
+		<ul>
+			<li class="navigation">
+				<a class="navbar" href="/home">Home</a>
+				</a>
+			</li>
+			<li class="navigation">
+				<a class="navbar" href="/home">Now Playing</a>
+			</li>
+			<li class="navigation">
+				<a class="navbar" href="/support">Contact</a>
+			</li>
+			<li class="navigation">
+				{{#if sessionActive}}
+				{{else}}
+				<a class="navbar" href="/register">SignUp</a>
+				{{/if}}
+			<li class="navigation1">
+				{{#if sessionActive}}
+				<a class="login" hrev="#">My Profile</a>
+				{{else}}
+				<a class="login" href="/login">Log in</a>
+				{{/if}}
+			</li>
+		</ul>
+	</nav>
+
 </head>
+
 <body>
-<form action="/production" method="post">
+
+<form class="productions" action="/production" method="post">
 <p>Please select one of the following productions: </p>
 
 <p class="production"> Avatar</p>
@@ -54,6 +87,12 @@
 <datalist id="Scary3">
     <option value="05/12 3:30pm"></option>
     <option value = "06/12 5:30pm"></option>
+
 </datalist>
+
 </form>
+
+
+<p class="footer">We are Xtheatre! © All copyrights are reserved.</p>
+
 </body>
