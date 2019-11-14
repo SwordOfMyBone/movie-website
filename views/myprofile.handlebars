@@ -15,7 +15,7 @@
 
 
 <body>
-	<img src="img\lion.png" class="logo" alt="images of logo"/>
+	<img src="img\lion.png" class="logo" alt="images of logo" />
 
 	<nav>
 		<ul>
@@ -44,22 +44,24 @@
 		</ul>
 	</nav>
 	</header>
-    <table>
-        <tr>
-            <td>Profile Picture:</td>
-        <td><img src= {{imgUrl}} alt="??" width="100" height="100"></td>
-        <td><form action="/myprofile" method="POST">
-        <input type="file" name="avatar">
-			<p><input type="submit" value="Change"></p>
-            </td>
-		</form>
-        </tr>
-        <tr>
-            <td>name</td>
-            <td>{{name}}</td>
-            
-        </tr>
-    </table>
+	<table>
+		<tr>
+			<td>Profile Picture:</td>
+			<td><img src={{imgUrl}} alt="??" width="100" height="100"></td>
+			<td>
+				<form action="/myprofile" enctype="multipart/form-data" method="post">
+					<p><input type="file" name="avatar"></p>
+					<p><input type="submit" value="Create"></p>
+				</form>
+			</td>
+
+		</tr>
+		<tr>
+			<td>Name:</td>
+			<td>{{name}}</td>
+		</tr>
+		<a href="/logout">Log Out</a>
+	</table>
 
 
 </body>
