@@ -78,11 +78,11 @@ router.get('/test', ctx => {
  */
 router.get('/', async ctx => {
 	try {
-		if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
+		//if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
 		const data = {}
 		if(ctx.query.msg) data.msg = ctx.query.msg
 		console.log(ctx.session.authorised)
-		await ctx.render('index')
+		await ctx.render('homePage')
 	} catch(err) {
 		await ctx.render('error', {message: err.message})
 	}
