@@ -13,6 +13,7 @@ const staticDir = require('koa-static')
 const bodyParser = require('koa-bodyparser')
 const koaBody = require('koa-body')({multipart: true, uploadDir: '.'})
 const session = require('koa-session')
+const database = require('sqlite-async')
 //const jimp = require('jimp')
 
 /* IMPORT CUSTOM MODULES */
@@ -68,11 +69,7 @@ router.get('/logout', async ctx => {
 	ctx.redirect('/home')
 })
 
-// just testing sessions since we dont have the DB ready yet so i cant do this with user login, when you go onto /test it automatically logs you in and removes the log in button from home page and replaces with MyProfile button
-router.get('/test', ctx => {
-	ctx.session.authorised = true
-	ctx.redirect('/home')
-})
+
 
 /**
  * The secure home page.
@@ -83,11 +80,11 @@ router.get('/test', ctx => {
  */
 router.get('/', async ctx => {
 	try {
-		if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
+		//if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
 		const data = {}
 		if(ctx.query.msg) data.msg = ctx.query.msg
 		console.log(ctx.session.authorised)
-		await ctx.render('index')
+		await ctx.render('homePage')
 	} catch(err) {
 		await ctx.render('error', {message: err.message})
 	}
@@ -153,7 +150,7 @@ router.post('/login', async ctx => {
 		const user = await new User(dbName)
 		await user.login(body.user, body.pass)
 		ctx.session.authorised = true
-		return ctx.redirect('/?msg=you are now logged in...')
+		return ctx.redirect('/?msg=you are now logged in...', body.user)
 	} catch (err) {
 		await ctx.render('error', { message: err.message })
 	}
@@ -187,6 +184,32 @@ router.get('/production', async ctx => {
 	} //should be something like this well have to test 
 	//after the database has been successfuly fixed/created
 })
+
+
+
+/*
+// semi complete, pushing because i wanna switch devices
+router.get('/myprofile', async ctx => {
+	const test = "hsharif11"
+	const sql = `SELECT user FROM users WHERE user="${test}"`
+	const db = await database.open(dbName)
+	const name = await db.get(sql);
+	
+	let picture = `./avatars/${test}.jpg`
+	console.log(picture);
+	await ctx.render('myprofile', {sessionActive: ctx.session.authorised,
+	name: name.user,
+	imgUrl: picture
+	})
+})
+
+router.post('/myprofile', async ctx => {
+	
+	
+	ctx.redirect("myprofile")
+})
+
+*/
 
 
 app.use(router.routes())
