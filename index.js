@@ -58,7 +58,7 @@ router.get('/home', async ctx => {
 })
 
 router.get('/support', async ctx => await ctx.render("support"))
-router.get('/production', async ctx => await ctx.render("production"))
+//router.get('/production', async ctx => await ctx.render("production"))
 
 
 // logout button redirect to end session; add as href to all logout buttons on page
@@ -78,11 +78,11 @@ router.get('/logout', async ctx => {
  */
 router.get('/', async ctx => {
 	try {
-		if (ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
+		//if (ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
 		const data = {}
 		if (ctx.query.msg) data.msg = ctx.query.msg
 		console.log(ctx.session.authorised)
-		await ctx.render('index')
+		await ctx.render('homePage')
 	} catch (err) {
 		await ctx.render('error', { message: err.message })
 	}
