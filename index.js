@@ -62,6 +62,7 @@ router.get('/support', async ctx => await ctx.render('support'))
 router.get('/payment', async ctx => await ctx.render('payment'))
 router.get('/production', async ctx => await ctx.render('Production'))
 router.get('/payment_complete', async ctx => await ctx.render('payment_complete'))
+router.get('/quickpayment', async ctx=> await ctx.render('quickpayment'))
 
 // logout button redirect to end session; add as href to all logout buttons on page
 router.get('/logout', async ctx => {
@@ -170,8 +171,8 @@ router.post('/payment', bodyParser(), async ctx => {
 		await ctx.render('payment', body)
 	} catch(err) {
 	    err.message
-    }})
-
+	}})
+	
 router.get('/production', async ctx => {
 	ctx.session.authorised = true
 	ctx.redirect('/?msg=you can now select a production')
