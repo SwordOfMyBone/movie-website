@@ -164,13 +164,13 @@ router.get('/logout', async ctx => {
 
 router.get('/production', async ctx => {
 	try {
-		console.log("1")
+		const production = await new Production(dbName)
 		if (ctx.session.authorised !== true) {
-			console.log("2")
+			console.log("Tomato")
 			ctx.redirect('/login')
+			const production = await new Production(dbName)
 			//sql = 'SELECT production, dates FROM ProductionTable'
 			//data = await this.db.get(sql)
-
 		}
 
 	} catch (err) {
