@@ -27,7 +27,7 @@ const Production = require('./modules/production')
 /* CONFIGURING THE MIDDLEWARE */
 app.keys = ['darkSecret']
 app.use(staticDir('public'))
-app.use(bodyParser())
+// app.use(bodyParser())
 app.use(session(app))
 app.use(
 	views(
@@ -57,9 +57,14 @@ router.get('/home', async ctx => {
 	}
 })
 
-router.get('/support', async ctx => await ctx.render("support"))
-router.get('/production', async ctx => await ctx.render("production"))
-
+router.get('/contact', async ctx => await ctx.render('Contactpage'))
+router.get('/booking', async ctx => await ctx.render('Bookingpage'))
+router.get('/login', async ctx => await ctx.render('login'))
+router.get('/signup', async ctx => await ctx.render('SignUp'))
+router.get('/support', async ctx => await ctx.render('support'))
+router.get('/payment', async ctx => await ctx.render('payment'))
+router.get('/production', async ctx => await ctx.render('Production'))
+router.get('/payment_complete', async ctx => await ctx.render('payment_complete'))
 
 // logout button redirect to end session; add as href to all logout buttons on page
 router.get('/logout', async ctx => {
@@ -162,26 +167,35 @@ router.get('/logout', async ctx => {
 
 })
 
-router.get('/production', async ctx => {
+router.post('/payment', koaBody, async ctx => {
 	try {
-		console.log("1")
-		if (ctx.session.authorised !== true) {
-			console.log("2")
-			ctx.redirect('/login')
-			//sql = 'SELECT production, dates FROM ProductionTable'
-			//data = await this.db.get(sql)
 
-		}
+		console.log(ctx.request.body)
+		const body = ctx.request.body
+		await ctx.render('payment', body)
+	} catch(err) {
+	    err.message
+    }})
 
-	} catch (err) {
-		await ctx.render('login', { message: err.message })
-	} // Will check if the session is open then it will direct the user
-	//to production, if session isn't open it will ask the user to log in
+router.get('/production', async ctx => {
+	ctx.session.authorised = true
+	ctx.redirect('/?msg=you can now select a production')
+	try{
+		let RetrieveData =`SELECT production, dates FROM ProductionTable`
+		const production = await this.db.get(sql)
+	}
+	catch(err){
+		await ctx.render('error',{message: err.message})
+	} //should be something like this well have to test 
+	//after the database has been successfuly fixed/created
+
 })
 
 
 
-// show logged in users info
+
+/*
+// semi complete, pushing because i wanna switch devices
 router.get('/myprofile', async ctx => {
 	const test = ctx.session.username
 	const sql = `SELECT user FROM users WHERE user="${test}"`
@@ -225,6 +239,7 @@ router.post('/myprofile', async ctx => {
 	await fs.copy(path, `public/avatars/hsharif11.${extension}`)
 	ctx.redirect("myprofile")
 })*/
+
 
 
 
