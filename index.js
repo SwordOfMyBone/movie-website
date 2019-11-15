@@ -82,7 +82,7 @@ router.get('/', async ctx => {
 		const data = {}
 		if (ctx.query.msg) data.msg = ctx.query.msg
 		console.log(ctx.session.authorised)
-		await ctx.render('homePage')
+		await ctx.redirect("/home")
 	} catch (err) {
 		await ctx.render('error', { message: err.message })
 	}
