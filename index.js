@@ -165,6 +165,7 @@ router.get('/logout', async ctx => {
 router.get('/production', async ctx => {
 	try {
 		const production = await new Production(dbName)
+
 		if (ctx.session.authorised !== true) {
 			console.log("Tomato")
 			ctx.redirect('/login')
@@ -173,7 +174,9 @@ router.get('/production', async ctx => {
 			//data = await this.db.get(sql)
 		} else {
 			console.log(true)
-			await ctx.render('Production')
+			await ctx.render('Production', {
+				sessionActive: ctx.session.authorised
+			})
 		}
 	} catch (err) {
 		await ctx.render('login', { message: err.message })
