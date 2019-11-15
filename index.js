@@ -171,8 +171,10 @@ router.get('/production', async ctx => {
 			const production = await new Production(dbName)
 			//sql = 'SELECT production, dates FROM ProductionTable'
 			//data = await this.db.get(sql)
+		} else {
+			console.log(true)
+			await ctx.render('Production')
 		}
-
 	} catch (err) {
 		await ctx.render('login', { message: err.message })
 	} // Will check if the session is open then it will direct the user
