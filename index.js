@@ -46,21 +46,22 @@ app.use(
 	)
 )
 
+
+
 const defaultPort = 8080
 const port = process.env.PORT || defaultPort
 const dbName = 'website.db'
-
+const production = new Production(dbName)
 router.get('/home', async ctx => {
 	try {
-		if (ctx.session.authorised) {
-			return await ctx.render('homePage', {
-				sessionActive: ctx.session.authorised
-			})
-		} else {
-			return await ctx.render('homePage', {
-				sessionActive: ctx.session.authorised
-			})
-		}
+		const db = await database.open(dbName);
+		let sql = 'SELECT movie FROM movies;'
+		const data = await db.all(sql)
+		console.log(data)
+		await ctx.render('homePage', {
+			sessionActive: ctx.session.authorised,
+			movies: data
+		})
 	} catch (err) {
 		ctx.body = err.message
 	}
@@ -74,6 +75,9 @@ router.get('/support', async ctx => await ctx.render('support'))
 router.get('/payment', async ctx => await ctx.render('payment'))
 router.get('/production', async ctx => await ctx.render('Production'))
 router.get('/payment_complete', async ctx => await ctx.render('payment_complete'))
+router.get('/support', async ctx => await ctx.render('support', { sessionActive: ctx.session.authorised }))
+//router.get('/production', async ctx => await ctx.render("production"))
+
 
 // logout button redirect to end session; add as href to all logout buttons on page
 router.get('/logout', async ctx => {
@@ -254,7 +258,12 @@ router.get('/myprofile', async ctx => {
 	})
 })
 
+router.get('Prod', async ctx => {
+	await ctx.render('Prod', { sessionActive: ctx.session.authorised })
+})
+
 // currently broken
+<<<<<<< HEAD
 router.get('/Production/:movie', async ctx => {
 	/*const db = await database.open(dbName)
 	let sql = 'CREATE TABLE IF NOT EXISTS "movies1" ("id" INTEGER PRIMARY KEY AUTOINCREMENT, "movie" TEXT, "date" TEXT, "time" TEXT);'
@@ -270,6 +279,21 @@ router.get('/Production/:movie', async ctx => {
 	const movie = new Production()
 	const data = movie.prodDetails(ctx.params.movie)
 	await ctx.render('Production', data)
+=======
+router.get('/Prod/:movie', async ctx => {
+	if (ctx.session.authorised) {
+		const sql = `SELECT * FROM showingSchedule WHERE movie="${ctx.params.movie}";`
+		const db = await database.open(dbName)
+		const data = await db.all(sql)
+		console.log(data)
+		console.log(ctx.params.movie)
+		await db.close()
+		await ctx.render('Prod', { info: data, sessionActive: ctx.session.authorised })
+	}
+	else {
+		return await ctx.redirect('/login')
+	}
+>>>>>>> husein
 }
 )
 /*
@@ -288,6 +312,6 @@ router.post('/myprofile', async ctx => {
 
 
 app.use(router.routes())
-module.exports = app.listen(port, async() =>
+module.exports = app.listen(port, async () =>
 	console.log(`listening on port ${port}`)
 )

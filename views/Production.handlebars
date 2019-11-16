@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
+	<meta charset="utf-8">
 
-<link href="production.css" type="text/css" rel="stylesheet" />
+	<link href="production.css" type="text/css" rel="stylesheet" />
 
-	<img src="img\lion.png" class="logo" alt="images of logo"/>
+	<img src="img\lion.png" class="logo" alt="images of logo" />
 
 	<nav>
 		<ul>
@@ -26,7 +27,7 @@
 				{{/if}}
 			<li class="navigation1">
 				{{#if sessionActive}}
-				<a class="login" hrev="#">My Profile</a>
+				<a class="login" href="/myprofile">My Profile</a>
 				{{else}}
 				<a class="login" href="/login">Log in</a>
 				{{/if}}
