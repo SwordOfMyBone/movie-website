@@ -40,21 +40,22 @@ app.use(
 	)
 )
 
+
+
 const defaultPort = 8080
 const port = process.env.PORT || defaultPort
 const dbName = 'website.db'
-
+const production = new Production(dbName)
 router.get('/home', async ctx => {
 	try {
-		if (ctx.session.authorised) {
-			return await ctx.render('homePage', {
-				sessionActive: ctx.session.authorised
-			})
-		} else {
-			return await ctx.render('homePage', {
-				sessionActive: ctx.session.authorised
-			})
-		}
+		const db = await database.open(dbName);
+		let sql = 'SELECT movie FROM movies;'
+		const data = await db.all(sql)
+		console.log(data)
+		await ctx.render('homePage', {
+			sessionActive: ctx.session.authorised,
+			movies: data
+		})
 	} catch (err) {
 		ctx.body = err.message
 	}
@@ -202,22 +203,24 @@ router.get('/myprofile', async ctx => {
 	})
 })
 
-// currently broken
-router.get('/Production/:movie', async ctx => {
-	/*const db = await database.open(dbName)
-	let sql = 'CREATE TABLE IF NOT EXISTS "movies1" ("id" INTEGER PRIMARY KEY AUTOINCREMENT, "movie" TEXT, "date" TEXT, "time" TEXT);'
-	await db.run(sql)
-	const sql1 = 'INSERT INTO movies1(movie, date, time) VALUES( "avatar", "24/04/20", "12:00");'
-	await db.run(sql1)
+router.get('Prod', async ctx => {
+	await ctx.render('Prod', { sessionActive: ctx.session.authorised })
+})
 
-	let sql2 = `SELECT * FROM movies1 WHERE movie = "${ctx.params.movie}";`;
-	const data = await db.get(sql2);
-	await db.close();
-	console.log(data);
-	*/
-	const movie = new Production()
-	const data = movie.prodDetails(ctx.params.movie)
-	await ctx.render('Production', data)
+// currently broken
+router.get('/Prod/:movie', async ctx => {
+	if (ctx.session.authorised) {
+		const sql = `SELECT * FROM showingSchedule WHERE movie="${ctx.params.movie}";`
+		const db = await database.open(dbName)
+		const data = await db.all(sql)
+		console.log(data)
+		console.log(ctx.params.movie)
+		await db.close()
+		await ctx.render('Prod', { info: data, sessionActive: ctx.session.authorised })
+	}
+	else {
+		return await ctx.redirect('/login')
+	}
 }
 )
 

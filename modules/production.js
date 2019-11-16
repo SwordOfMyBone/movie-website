@@ -5,14 +5,16 @@ module.exports = class Production {
     constructor(dbName = ':memory:') {
         return (async () => {
             this.db = await sqlite.open(dbName)
-            const sql = 'CREATE TABLE IF NOT EXISTS "movies" ("movie" TEXT PRIMARY KEY, "Poster" LONGBLOB, "Details" TEXT);'
-            const sql2 = 'CREATE TABLE IF NOT EXISTS "showingSchedule"("ShowNumber" TEXT PRIMARY KEY, "date" TEXT, "time" TEXT,"movie" TEXT, numberOfSeats INTEGER, FOREIGN KEY("movie") REFERENCES "movies"("movie"));'
+            let sql = 'CREATE TABLE IF NOT EXISTS "movies" ("movie" TEXT PRIMARY KEY, "Poster" LONGBLOB, "Details" TEXT, UNIQUE("movie"));'
+            await this.db.run(sql)
+            sql = 'CREATE TABLE IF NOT EXISTS "showingSchedule"("ShowNumber" INTEGER PRIMARY KEY AUTOINCREMENT, "date" TEXT, "time" TEXT,"movie" TEXT, numberOfSeats INTEGER, FOREIGN KEY("movie") REFERENCES "movies"("movie"));'
             //  'CREATE TABLE IF NOT EXISTS "movieDisplayRoom"("displayRoom" INTEGER PRIMARY KEY, "numberOfSeats" INTEGER,FOREIGN KEY ("ShowNumber") REFERENCES "showingSchedule"(ShowNumber));'
             await this.db.run(sql)
-            await this.db.run(sql2)
+
             return this
         })()
     }
+
     async prodDetails(movie) {
         try {
             let sql = `SELECT * FROM movies WHERE movie = "${movie}";`;

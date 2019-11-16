@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <link href="/mainstyle.css" type="text/css" rel="stylesheet" />
+
+    <img src="img/lion.png" class="logo" alt="images of logo" />
+
+
+
+</head>
+
+<body>
+    <nav>
+        <ul>
+            <li class="navigation">
+                <a class="navbar" href="/home">Home</a>
+                </a>
+            </li>
+            <li class="navigation">
+                <a class="navbar" href="/home">Now Playing</a>
+            </li>
+            <li class="navigation">
+                <a class="navbar" href="/support">Contact</a>
+            </li>
+            <li class="navigation">
+                {{#if sessionActive}}
+                {{else}}
+                <a class="navbar" href="/register">SignUp</a>
+                {{/if}}
+            <li class="navigation1">
+                {{#if sessionActive}}
+                <a class="login" href="/myprofile">My Profile</a>
+                {{else}}
+                <a class="login" href="/login">Log in</a>
+                {{/if}}
+            </li>
+        </ul>
+    </nav>
+    <table>
+        {{#each info}}
+        <tr>
+            <th>{{this.movie}}</th>
+
+        </tr>
+        <tr>
+            <th><img src="/img/{{this.movie}}.jpg" alt="{{this.movie}}" height="300" width="200"></th>
+        </tr>
+        <tr>
+            <th>Date : {{this.date}}</th>
+        </tr>
+        <tr>
+            <th>Time : {{this.time}}</th>
+
+        </tr>
+        <tr>
+            <th>Seats Available : {{this.numberOfSeats}}</th>
+        </tr>
+        <tr>
+            <th><a href="/booking/{{this.time}}"> <button class="contbutton1">Book This Show</button></a></th>
+        </tr>
+        {{/each}}
+    </table>
+
+    <p class="footer">We are Xtheatre! © All copyrights are reserved.</p>
+
+</body>
