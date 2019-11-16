@@ -84,7 +84,7 @@ router.get('/', async ctx => {
 		const data = {}
 		if (ctx.query.msg) data.msg = ctx.query.msg
 		console.log(ctx.session.authorised)
-		await ctx.render('homePage')
+		await ctx.redirect("/home")
 	} catch (err) {
 		await ctx.render('error', { message: err.message })
 	}
@@ -166,15 +166,21 @@ router.get('/logout', async ctx => {
 
 router.get('/production', async ctx => {
 	try {
-		console.log('1')
+
+		const production = await new Production(dbName)
+
 		if (ctx.session.authorised !== true) {
-			console.log('2')
+			console.log("Tomato")
 			ctx.redirect('/login')
+			const production = await new Production(dbName)
 			//sql = 'SELECT production, dates FROM ProductionTable'
 			//data = await this.db.get(sql)
-
+		} else {
+			console.log(true)
+			await ctx.render('Production', {
+				sessionActive: ctx.session.authorised
+			})
 		}
-
 	} catch (err) {
 		await ctx.render('login', { message: err.message })
 	} // Will check if the session is open then it will direct the user
