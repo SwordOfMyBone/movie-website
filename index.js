@@ -6,7 +6,7 @@
 
 /* MODULE IMPORTS */
 
- 
+
 const Koa = require('koa')
 const Router = require('koa-router')
 const views = require('koa-views')
@@ -23,9 +23,8 @@ const mime = require('mime-types')
 const User = require('./modules/user')
 
 
-
 const app = new Koa()
-const router = new Router();
+const router = new Router()
 const Production = require('./modules/production')
 
 /* CONFIGURING THE MIDDLEWARE */
@@ -61,7 +60,7 @@ router.get('/home', async ctx => {
 	}
 })
 
-router.get('/support', async ctx => await ctx.render("support"))
+router.get('/support', async ctx => await ctx.render('support'))
 //router.get('/production', async ctx => await ctx.render("production"))
 
 
@@ -70,8 +69,6 @@ router.get('/logout', async ctx => {
 	ctx.session.authorised = null
 	ctx.redirect('/home')
 })
-
-
 
 
 /**
@@ -118,9 +115,9 @@ router.post('/register', koaBody, async ctx => {
 		const user = await new User(dbName)
 		// Check for optional input fields, if card info is entered add it to user register params.
 		if (
-			body['card number'].length != 0 &&
-			body.expiry.length != 0 &&
-			body['security code'].length != 0
+			body['card number'].length !== 0 &&
+			body.expiry.length !== 0 &&
+			body['security code'].length !== 0
 		) {
 			await user.register(
 				body.user,
@@ -132,7 +129,7 @@ router.post('/register', koaBody, async ctx => {
 		} else {
 			await user.register(body.user, body.pass)
 		}
-		await user.uploadPicture(ctx.request.files.avatar, body.user);
+		await user.uploadPicture(ctx.request.files.avatar, body.user)
 		// redirect to the home page
 		ctx.redirect(`/?msg=new user "${body.name}" added`)
 	} catch (err) {
@@ -162,16 +159,16 @@ router.post('/login', async ctx => {
 
 router.get('/logout', async ctx => {
 	ctx.session.authorised = null
-	console.log("Logged OUT")
+	console.log('Logged OUT')
 	ctx.redirect('/?msg=you are now logged out')
 
 })
 
 router.get('/production', async ctx => {
 	try {
-		console.log("1")
+		console.log('1')
 		if (ctx.session.authorised !== true) {
-			console.log("2")
+			console.log('2')
 			ctx.redirect('/login')
 			//sql = 'SELECT production, dates FROM ProductionTable'
 			//data = await this.db.get(sql)
@@ -185,14 +182,13 @@ router.get('/production', async ctx => {
 })
 
 
-
 // show logged in users info
 router.get('/myprofile', async ctx => {
 	const test = ctx.session.username
 	const sql = `SELECT user FROM users WHERE user="${test}"`
 	const db = await database.open(dbName)
-	const name = await db.get(sql);
-	let picture = `./avatars/${test}.png`
+	const name = await db.get(sql)
+	const picture = `./avatars/${test}.png`
 	await ctx.render('myprofile', {
 		sessionActive: ctx.session.authorised,
 		name: name.user,
@@ -215,7 +211,7 @@ router.get('/Production/:movie', async ctx => {
 	*/
 	const movie = new Production()
 	const data = movie.prodDetails(ctx.params.movie)
-	await ctx.render("Production", data)
+	await ctx.render('Production', data)
 }
 )
 
@@ -232,9 +228,7 @@ router.post('/myprofile', async ctx => {
 })*/
 
 
-
-
 app.use(router.routes())
-module.exports = app.listen(port, async () =>
+module.exports = app.listen(port, async() =>
 	console.log(`listening on port ${port}`)
 )
