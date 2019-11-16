@@ -6,20 +6,26 @@
 
 /* MODULE IMPORTS */
 
+
 const Koa = require('koa')
 const Router = require('koa-router')
 const views = require('koa-views')
 const staticDir = require('koa-static')
 const bodyParser = require('koa-bodyparser')
-const koaBody = require('koa-body')({multipart: true, uploadDir: '.'})
+const koaBody = require('koa-body')({ multipart: true, uploadDir: '.' })
 const session = require('koa-session')
 const database = require('sqlite-async')
+const fs = require('fs-extra')
+const mime = require('mime-types')
 //const jimp = require('jimp')
 
 /* IMPORT CUSTOM MODULES */
 const User = require('./modules/user')
+
+
 const app = new Koa()
 const router = new Router()
+const Production = require('./modules/production')
 
 /* CONFIGURING THE MIDDLEWARE */
 app.keys = ['darkSecret']
@@ -71,7 +77,6 @@ router.get('/logout', async ctx => {
 })
 
 
-
 /**
  * The secure home page.
  *
@@ -81,13 +86,13 @@ router.get('/logout', async ctx => {
  */
 router.get('/', async ctx => {
 	try {
-		//if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
+		//if (ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
 		const data = {}
-		if(ctx.query.msg) data.msg = ctx.query.msg
+		if (ctx.query.msg) data.msg = ctx.query.msg
 		console.log(ctx.session.authorised)
-		await ctx.render('homePage')
-	} catch(err) {
-		await ctx.render('error', {message: err.message})
+		await ctx.redirect("/home")
+	} catch (err) {
+		await ctx.render('error', { message: err.message })
 	}
 })
 
@@ -116,9 +121,9 @@ router.post('/register', koaBody, async ctx => {
 		const user = await new User(dbName)
 		// Check for optional input fields, if card info is entered add it to user register params.
 		if (
-			body['card number'].length != 0 &&
-      body.expiry.length != 0 &&
-      body['security code'].length != 0
+			body['card number'].length !== 0 &&
+			body.expiry.length !== 0 &&
+			body['security code'].length !== 0
 		) {
 			await user.register(
 				body.user,
@@ -130,7 +135,7 @@ router.post('/register', koaBody, async ctx => {
 		} else {
 			await user.register(body.user, body.pass)
 		}
-		await user.uploadPicture(ctx.request.files.avatar, body.user);
+		await user.uploadPicture(ctx.request.files.avatar, body.user)
 		// redirect to the home page
 		ctx.redirect(`/?msg=new user "${body.name}" added`)
 	} catch (err) {
@@ -151,6 +156,7 @@ router.post('/login', async ctx => {
 		const user = await new User(dbName)
 		await user.login(body.user, body.pass)
 		ctx.session.authorised = true
+		ctx.session.username = body.user
 		return ctx.redirect('/?msg=you are now logged in...', body.user)
 	} catch (err) {
 		await ctx.render('error', { message: err.message })
@@ -159,9 +165,9 @@ router.post('/login', async ctx => {
 
 router.get('/logout', async ctx => {
 	ctx.session.authorised = null
-	console.log("Logged OUT")
+	console.log('Logged OUT')
 	ctx.redirect('/?msg=you are now logged out')
-	
+
 })
 
 router.post('/payment', bodyParser(), async ctx => {
@@ -190,27 +196,73 @@ router.get('/production', async ctx => {
 
 /*
 // semi complete, pushing because i wanna switch devices
+
+		const production = await new Production(dbName)
+
+		if (ctx.session.authorised !== true) {
+			console.log("Tomato")
+			ctx.redirect('/login')
+			const production = await new Production(dbName)
+			//sql = 'SELECT production, dates FROM ProductionTable'
+			//data = await this.db.get(sql)
+		} else {
+			console.log(true)
+			await ctx.render('Production', {
+				sessionActive: ctx.session.authorised
+			})
+		}
+	} catch (err) {
+		await ctx.render('login', { message: err.message })
+	} // Will check if the session is open then it will direct the user
+	//to production, if session isn't open it will ask the user to log in
+})
+
+
+// show logged in users info
 router.get('/myprofile', async ctx => {
-	const test = "hsharif11"
+	const test = ctx.session.username
 	const sql = `SELECT user FROM users WHERE user="${test}"`
 	const db = await database.open(dbName)
-	const name = await db.get(sql);
-	
-	let picture = `./avatars/${test}.jpg`
-	console.log(picture);
-	await ctx.render('myprofile', {sessionActive: ctx.session.authorised,
-	name: name.user,
-	imgUrl: picture
+	const name = await db.get(sql)
+	const picture = `./avatars/${test}.png`
+	await ctx.render('myprofile', {
+		sessionActive: ctx.session.authorised,
+		name: name.user,
+		imgUrl: picture
 	})
 })
 
-router.post('/myprofile', async ctx => {
-	
-	
-	ctx.redirect("myprofile")
-})
+// currently broken
+router.get('/Production/:movie', async ctx => {
+	/*const db = await database.open(dbName)
+	let sql = 'CREATE TABLE IF NOT EXISTS "movies1" ("id" INTEGER PRIMARY KEY AUTOINCREMENT, "movie" TEXT, "date" TEXT, "time" TEXT);'
+	await db.run(sql)
+	const sql1 = 'INSERT INTO movies1(movie, date, time) VALUES( "avatar", "24/04/20", "12:00");'
+	await db.run(sql1)
 
-*/
+	let sql2 = `SELECT * FROM movies1 WHERE movie = "${ctx.params.movie}";`;
+	const data = await db.get(sql2);
+	await db.close();
+	console.log(data);
+	*/
+	const movie = new Production()
+	const data = movie.prodDetails(ctx.params.movie)
+	await ctx.render('Production', data)
+}
+)
+
+
+/*  // Needs fixing, typeError: cannot read property 'avatar' of undefined????
+router.post('/myprofile', async ctx => {
+
+	const { path, type } = ctx.request.files.avatar;
+	const extension = mime.extension(type)
+	console.log(`path: ${path}`)
+	console.log(`extension: ${extension}`)
+	await fs.copy(path, `public/avatars/hsharif11.${extension}`)
+	ctx.redirect("myprofile")
+})*/
+
 
 
 app.use(router.routes())
