@@ -263,23 +263,6 @@ router.get('Prod', async ctx => {
 })
 
 // currently broken
-<<<<<<< HEAD
-router.get('/Production/:movie', async ctx => {
-	/*const db = await database.open(dbName)
-	let sql = 'CREATE TABLE IF NOT EXISTS "movies1" ("id" INTEGER PRIMARY KEY AUTOINCREMENT, "movie" TEXT, "date" TEXT, "time" TEXT);'
-	await db.run(sql)
-	const sql1 = 'INSERT INTO movies1(movie, date, time) VALUES( "avatar", "24/04/20", "12:00");'
-	await db.run(sql1)
-
-	let sql2 = `SELECT * FROM movies1 WHERE movie = "${ctx.params.movie}";`;
-	const data = await db.get(sql2);
-	await db.close();
-	console.log(data);
-	
-	const movie = new Production()
-	const data = movie.prodDetails(ctx.params.movie)
-	await ctx.render('Production', data)
-=======
 router.get('/Prod/:movie', async ctx => {
 	if (ctx.session.authorised) {
 		const sql = `SELECT * FROM showingSchedule WHERE movie="${ctx.params.movie}";`
@@ -293,7 +276,6 @@ router.get('/Prod/:movie', async ctx => {
 	else {
 		return await ctx.redirect('/login')
 	}
->>>>>>> husein
 }
 )
 /*
