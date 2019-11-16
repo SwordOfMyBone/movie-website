@@ -1,23 +1,25 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-        <link rel="shortcut icon" type="image/x-ico" href="img\favicon.ico"/>
-<meta charset="UTF-8">
-<title>Support Page</title>
-<link rel="stylesheet" type="text/css" href="support.css" />
+  <link rel="shortcut icon" type="image/x-ico" href="img\favicon.ico" />
+  <meta charset="UTF-8">
+  <title>Support Page</title>
+  <link rel="stylesheet" type="text/css" href="support.css" />
 </head>
+
 <body>
-    <figure>
-                <img src="img\lion.png" class="logo" alt="images of logo"/>
-                 </figure>
-<header>  
+  <figure>
+    <img src="img\lion.png" class="logo" alt="images of logo" />
+  </figure>
+  <header>
     <h1 class="intocuh">Get in touch!</h1>
-</header> 
-<nav>
+  </header>
+  <nav>
     <ul>
       <li class="navigation">
         <a class="navbar" href="/home">Home</a>
-          </a>
+        </a>
       </li>
       <li class="navigation">
         <a class="navbar" href="/home">Now Playing</a>
@@ -25,31 +27,37 @@
       <li class="navigation">
         <a class="navbar" href="/support">Contact</a>
       </li>
+      <li class="navigation">
+        {{#if sessionActive}}
+        {{else}}
+        <a class="navbar" href="/register">SignUp</a>
+        {{/if}}
       <li class="navigation1">
+        {{#if sessionActive}}
+        <a class="login" href="/myprofile">My Profile</a>
+        {{else}}
         <a class="login" href="/login">Log in</a>
+        {{/if}}
       </li>
     </ul>
   </nav>
-<main>
+  <main>
     <section class="helpteam">
-        <h2> Need help in creating a booking? contact our help team: </h2>
-        <ul>
-            <li>Phone : <a href = "tel:+44123123123"> +44123123123</a></li>
-            <li>E-mail : <a href = "mailto:sharifh4@uni.coventry.ac.uk"> Xtheatre@help.com </a></li>
-        </ul>
+      <h2> Need help in creating a booking? contact our help team: </h2>
+      <ul>
+        <li>Phone : <a href="tel:+44123123123"> +44123123123</a></li>
+        <li>E-mail : <a href="mailto:sharifh4@uni.coventry.ac.uk"> Xtheatre@help.com </a></li>
+      </ul>
     </section>
-</main>
-<aside class="locateus">
+  </main>
+  <aside class="locateus">
     <h3>Trouble locating us?</h3>
     <p>We're located in the engineering and computing building at coventry; 3 Gulson Rd, Coventry CV1 2JH:</p>
-</aside>
-  <img src = "img/location.PNG"  alt = "location"  height = "200" width = "300"  >
-<footer>
-  <p class="footer">We are Xtheatre! © All copyrights are reserved.</p>
-</footer>
+  </aside>
+  <img src="img/location.PNG" alt="location" height="200" width="300">
+  <footer>
+    <p class="footer">We are Xtheatre! © All copyrights are reserved.</p>
+  </footer>
 </body>
+
 </html>
-
-
-
-

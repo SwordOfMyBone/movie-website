@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
+	<meta charset="utf-8">
 
-<link href="production.css" type="text/css" rel="stylesheet" />
+	<link href="production.css" type="text/css" rel="stylesheet" />
 
-	<img src="img\lion.png" class="logo" alt="images of logo"/>
+	<img src="img\lion.png" class="logo" alt="images of logo" />
 
 	<nav>
 		<ul>
@@ -26,7 +27,7 @@
 				{{/if}}
 			<li class="navigation1">
 				{{#if sessionActive}}
-				<a class="login" hrev="#">My Profile</a>
+				<a class="login" href="/myprofile">My Profile</a>
 				{{else}}
 				<a class="login" href="/login">Log in</a>
 				{{/if}}
@@ -38,61 +39,61 @@
 
 <body>
 
-<form class="productions" action="/production" method="post">
-<p>Please select one of the following productions: </p>
+	<form class="productions" action="/production" method="post">
+		<p>Please select one of the following productions: </p>
 
-<p class="production"> Avatar</p>
-<img src="/img/Avatarr1.jpg" class="Images" alt="Avatar">
-<p>Display day &amp; time: </p>
+		<p class="production"> Avatar</p>
+		<img src="/img/Avatarr1.jpg" class="Images" alt="Avatar">
+		<p>Display day &amp; time: </p>
 
-<input list="AvatarTimetable">
-<datalist id="AvatarTimetable">
-    <option value="03/12 3:30pm"></option>
-    <option value = "04/12 5:30pm"></option>
-</datalist>
+		<input list="AvatarTimetable">
+		<datalist id="AvatarTimetable">
+			<option value="03/12 3:30pm"></option>
+			<option value="04/12 5:30pm"></option>
+		</datalist>
 
-<p class="production"> Scary Movie</p>
-<img src="/img/ScaryMovie.jpg" class="Images" alt="Scary Movie">
-<p>Display day &amp; time: </p>
+		<p class="production"> Scary Movie</p>
+		<img src="/img/ScaryMovie.jpg" class="Images" alt="Scary Movie">
+		<p>Display day &amp; time: </p>
 
-<input list="DateAndTime">
-<datalist id="DateAndTime">
-    <option value="03/12 3:30pm"></option>
-    <option value = "04/12 5:30pm"></option>
-</datalist>
+		<input list="DateAndTime">
+		<datalist id="DateAndTime">
+			<option value="03/12 3:30pm"></option>
+			<option value="04/12 5:30pm"></option>
+		</datalist>
 
-<p class="production"> Scary Movie</p>
-<img src="/img/ScaryMovie.jpg" class="Images" alt="Scary Movie">
-<p>Display day &amp; time:</p>
+		<p class="production"> Scary Movie</p>
+		<img src="/img/ScaryMovie.jpg" class="Images" alt="Scary Movie">
+		<p>Display day &amp; time:</p>
 
-<input list="Scary2">
-<datalist id="Scary2">
-    <option value="05/12 3:30pm"></option>
-    <option value = "06/12 5:30pm"></option>
-</datalist>
+		<input list="Scary2">
+		<datalist id="Scary2">
+			<option value="05/12 3:30pm"></option>
+			<option value="06/12 5:30pm"></option>
+		</datalist>
 
-<p class="production"> Scary Movie</p>
-<img src="/img/ScaryMovie.jpg" class="Images" alt="Scary Movie">
-<p>Display day &amp; time:</p>
-<input list="Scary3">
-<datalist id="Scary3">
-    <option value="03/12 3:30pm"></option>
-    <option value = "04/12 5:30pm"></option>
-</datalist>
-<p class="production"> Scary Movie</p>
-<img src="/img/ScaryMovie.jpg" class="Images" alt="Scary Movie">
-<p>Display day &amp; time: </p>
+		<p class="production"> Scary Movie</p>
+		<img src="/img/ScaryMovie.jpg" class="Images" alt="Scary Movie">
+		<p>Display day &amp; time:</p>
+		<input list="Scary3">
+		<datalist id="Scary3">
+			<option value="03/12 3:30pm"></option>
+			<option value="04/12 5:30pm"></option>
+		</datalist>
+		<p class="production"> Scary Movie</p>
+		<img src="/img/ScaryMovie.jpg" class="Images" alt="Scary Movie">
+		<p>Display day &amp; time: </p>
 
-<input list="Scary3">
-<datalist id="Scary3">
-    <option value="05/12 3:30pm"></option>
-    <option value = "06/12 5:30pm"></option>
+		<input list="Scary3">
+		<datalist id="Scary3">
+			<option value="05/12 3:30pm"></option>
+			<option value="06/12 5:30pm"></option>
 
-</datalist>
+		</datalist>
 
-</form>
+	</form>
 
 
-<p class="footer">We are Xtheatre! © All copyrights are reserved.</p>
+	<p class="footer">We are Xtheatre! © All copyrights are reserved.</p>
 
 </body>

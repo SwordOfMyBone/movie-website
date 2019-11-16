@@ -60,7 +60,7 @@ router.get('/home', async ctx => {
 	}
 })
 
-router.get('/support', async ctx => await ctx.render('support'))
+router.get('/support', async ctx => await ctx.render('support', { sessionActive: ctx.session.authorised }))
 //router.get('/production', async ctx => await ctx.render("production"))
 
 
@@ -235,6 +235,6 @@ router.post('/myprofile', async ctx => {
 
 
 app.use(router.routes())
-module.exports = app.listen(port, async() =>
+module.exports = app.listen(port, async () =>
 	console.log(`listening on port ${port}`)
 )
