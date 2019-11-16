@@ -31,7 +31,13 @@ const Production = require('./modules/production')
 app.keys = ['darkSecret']
 app.use(staticDir('public'))
 app.use(bodyParser())
-app.use(session(app))
+
+const CONFIG = {
+	rolling: true,
+	renew: true
+};
+
+app.use(session(CONFIG, app))
 app.use(
 	views(
 		`${__dirname}/views`,
@@ -68,11 +74,10 @@ router.get('/support', async ctx => await ctx.render('support'))
 router.get('/payment', async ctx => await ctx.render('payment'))
 router.get('/production', async ctx => await ctx.render('Production'))
 router.get('/payment_complete', async ctx => await ctx.render('payment_complete'))
-router.get('/quickpayment', async ctx=> await ctx.render('quickpayment'))
 
 // logout button redirect to end session; add as href to all logout buttons on page
 router.get('/logout', async ctx => {
-	ctx.session.authorised = null
+	ctx.session.authorised = null;
 	ctx.redirect('/home')
 })
 
@@ -170,6 +175,23 @@ router.get('/logout', async ctx => {
 
 })
 
+router.get('/quickpayment', async ctx => {
+	try {
+		if(ctx.session.username) {
+			console.log(ctx.session.username)
+			const sql = `SELECT id FROM users WHERE user LIKE "%${ctx.session.username}%";`
+			const db = await database.open(dbName)
+			const Username = await db.all(sql)
+			const sql2 = `SELECT "Card number", "Expiry Date", "Security Code" FROM card_details WHERE id LIKE "%${Username[0].id}%";`
+			const cardDetails = await db.all(sql2)
+			await db.close()
+			console.log('these are the payment details', cardDetails[0])
+			await ctx.render('quickpayment', cardDetails[0])}
+	} catch(err) {
+		await ctx.render('error', {message: err.message})
+	}
+})
+
 router.post('/payment', bodyParser(), async ctx => {
 	try {
 		console.log(ctx.request.body)
@@ -244,13 +266,13 @@ router.get('/Production/:movie', async ctx => {
 	const data = await db.get(sql2);
 	await db.close();
 	console.log(data);
-	*/
+	
 	const movie = new Production()
 	const data = movie.prodDetails(ctx.params.movie)
 	await ctx.render('Production', data)
 }
 )
-
+/*
 
 /*  // Needs fixing, typeError: cannot read property 'avatar' of undefined????
 router.post('/myprofile', async ctx => {
