@@ -29,6 +29,13 @@
 			</li>
 			<li class="navigation">
 				{{#if sessionActive}}
+				<a class="ShoppingCart" href ="/shopping"><img src="img/BlackCart.png"></a>
+				{{else}}
+				 <a class="ShoppingCart" href ="/shopping"></a>
+				 {{/if}}
+			</li>
+			<li class="navigation">
+				{{#if sessionActive}}
 				{{else}}
 				<a class="navbar" href="/register">SignUp</a>
 				{{/if}}
