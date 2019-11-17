@@ -179,6 +179,19 @@ router.get('/logout', async ctx => {
 
 })
 
+router.get('/ticketsavailable/:movie'), async ctx => {
+	try {
+		const body = ctx.request.body
+		const sql = `SELECT numberOfSeats FROM showingSchedule WHERE movie LIKE ${body.movieName};`
+		const db = await database.open(dbName)
+		const data = await db.get(sql)
+		await db.close()
+		await ctx.render('ticketsAvailable', data)
+	} catch(err) {
+		await ctx.render('error', { message: err.message })
+	}
+}
+
 router.get('/quickpayment', async ctx => {
 	try {
 		if(ctx.session.username) {
