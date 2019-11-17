@@ -21,8 +21,8 @@ module.exports = class Ticket {
 		try {
 			if(userID.length === 0) throw new Error('missing user id')
 			if(movieName.length === 0) throw new Error('missing movieName')
-			if(price.length == 0) throw new Error('missing price')
-			sql = `INSERT INTO tickets(userid, movieName, price) VALUES("${userID}", "${movieName}", "${price}");`
+			if(price.length === 0) throw new Error('missing price')
+			const sql = `INSERT INTO tickets(userid, movieName, price) VALUES("${userID}", "${movieName}", "${price}");`
 			await this.db.run(sql)
 			return true
 		}
@@ -37,7 +37,7 @@ module.exports = class Ticket {
 	// Possible expansion could include a function that gets the tickets and converts it into a pretty formatted form? (perhaps for the nodemailer task?) 
 	async getTickets(userID) {
 		try {
-			const sql = 'SELECT item FROM items WHERE list="food"'	
+			const sql = 'SELECT item FROM items WHERE list="food"'
 			db.all(sql, (err, rows) => {
 			  if(err) console.error(err.message)
 			  if(!err) console.log(rows) // rows is an array with all records
@@ -50,3 +50,4 @@ module.exports = class Ticket {
 			throw err
 		}
 	}
+}
