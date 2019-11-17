@@ -10,11 +10,13 @@ const saltRounds = 10
 module.exports = class User {
 
 	constructor(dbName = ':memory:') {
-		return (async () => {
+		return (async() => {
 			this.db = await sqlite.open(dbName)
 			// we need this table to store the user accounts
-			const sql = 'CREATE TABLE IF NOT EXISTS "users" ( "id" INTEGER PRIMARY KEY AUTOINCREMENT, "pass" TEXT, "user" TEXT );'
-			const sql2 = 'CREATE TABLE IF NOT EXISTS "card_details" ( "Card number" INTEGER, "Expiry Date" TEXT, "Security Code" INTEGER, "id" INTEGER, PRIMARY KEY("Card number"), FOREIGN KEY("id") REFERENCES "users"("id") );'
+			let sql = 'CREATE TABLE IF NOT EXISTS "users" ( "id" INTEGER PRIMARY KEY AUTOINCREMENT, "pass" TEXT, "user" TEXT );'
+			await this.db.run(sql)
+			sql = 'CREATE TABLE IF NOT EXISTS "card_details" ( "Card number" INTEGER, "Expiry Date" TEXT, '+
+			'"Security Code" INTEGER, "id" INTEGER, PRIMARY KEY("Card number"), FOREIGN KEY("id") REFERENCES "users"("id"));'
 			await this.db.run(sql)
 			await this.db.run(sql2)
 			return this
@@ -25,9 +27,7 @@ module.exports = class User {
 		try {
 			if (user.length === 0) throw new Error('missing username')
 			if (pass.length === 0) throw new Error('missing password')
-
-			//check for optional args
-			if (cNumber !== null && expiry !== null && secCode !== null) {
+			if (cNumber !== null && expiry !== null && secCode !== null) {//check for optional args
 				console.log('if statement ran')
 				let sql = `SELECT COUNT(id) as records FROM users WHERE user="${user}";`
 				const data = await this.db.get(sql)
@@ -53,15 +53,14 @@ module.exports = class User {
 				await this.db.run(sql)
 				return true
 			}
-
-		} catch (err) {
+		} catch(err){
 			throw err
 		}
 	}
 
 
 	async uploadPicture(pathntype, username) {
-		const { path, type } = pathntype;
+		const { path, type } = pathntype
 		const extension = mime.extension(type)
 		console.log(`path: ${path}`)
 		console.log(`extension: ${extension}`)

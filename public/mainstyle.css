@@ -173,6 +173,8 @@ nav {
 
 img {
   display: block;
+  width:35px;
+  height:35px
 }
 
 
@@ -201,4 +203,3 @@ img {
 .middle{
   height: 30em;
 }
-
