@@ -10,13 +10,13 @@ const saltRounds = 10
 module.exports = class User {
 
 	constructor(dbName = ':memory:') {
-		return (async() => {
+		return (async () => {
 			this.db = await sqlite.open(dbName)
 			// we need this table to store the user accounts
 			let sql = 'CREATE TABLE IF NOT EXISTS "users" ( "id" INTEGER PRIMARY KEY AUTOINCREMENT, "pass" TEXT, "user" TEXT );'
 			await this.db.run(sql)
-			sql = 'CREATE TABLE IF NOT EXISTS "card_details" ( "Card number" INTEGER, "Expiry Date" TEXT, '+
-			'"Security Code" INTEGER, "id" INTEGER, PRIMARY KEY("Card number"), FOREIGN KEY("id") REFERENCES "users"("id"));'
+			sql = 'CREATE TABLE IF NOT EXISTS "card_details" ( "Card number" INTEGER, "Expiry Date" TEXT, ' +
+				'"Security Code" INTEGER, "id" INTEGER, PRIMARY KEY("Card number"), FOREIGN KEY("id") REFERENCES "users"("id"));'
 			await this.db.run(sql)
 			return this
 		})()
@@ -52,7 +52,7 @@ module.exports = class User {
 				await this.db.run(sql)
 				return true
 			}
-		} catch(err){
+		} catch (err) {
 			throw err
 		}
 	}
