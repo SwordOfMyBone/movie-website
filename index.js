@@ -34,7 +34,14 @@ app.use(
 const defaultPort = 8080
 const port = process.env.PORT || defaultPort
 const dbName = 'website.db'
-const production = new Production(dbName)
+
+/**
+ * The secure home page.
+ *
+ * @name Home Page
+ * @route {GET} /
+ * @authentication This route requires cookie-based authentication.
+ */
 router.get('/home', async ctx => {
 	try {
 		const db = await database.open(dbName)
@@ -52,9 +59,16 @@ router.get('/home', async ctx => {
 router.get('/support', async ctx => await ctx.render('support', { sessionActive: ctx.session.authorised }))
 //router.get('/production', async ctx => await ctx.render("production"))
 
-// logout button redirect to end session; add as href to all logout buttons on page
+/**
+ * Secure logout
+ *
+ * @name Home Page
+ * @route {GET} /logout
+ * @authentication This route requires cookie-based authentication.
+ */
 router.get('/logout', async ctx => {
 	ctx.session.authorised = null
+	ctx.session.username = null
 	ctx.redirect('/home')
 })
 
@@ -67,10 +81,6 @@ router.get('/logout', async ctx => {
  */
 router.get('/', async ctx => {
 	try {
-		//if (ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
-		const data = {}
-		if (ctx.query.msg) data.msg = ctx.query.msg
-		console.log(ctx.session.authorised)
 		await ctx.redirect('/home')
 	} catch (err) {
 		await ctx.render('error', { message: err.message })
@@ -105,6 +115,7 @@ router.post('/register', koaBody, async ctx => {
 		} else {
 			await user.register(body.user, body.pass)
 		}
+		console.log(ctx.request.files.avatar)
 		await user.uploadPicture(ctx.request.files.avatar, body.user)
 		ctx.redirect(`/?msg=new user "${body.name}" added`) // redirect to the home page
 	} catch (err) {
@@ -129,16 +140,10 @@ router.post('/login', async ctx => {
 		await ctx.render('error', { message: err.message })
 	}
 })
-router.get('/logout', async ctx => {
-	ctx.session.authorised = null
-	console.log('Logged OUT')
-	ctx.redirect('/?msg=you are now logged out')
-})
+
 router.get('/production', async ctx => {
 	try {
-
 		const production = await new Production(dbName)
-
 		if (ctx.session.authorised !== true) {
 			console.log('Tomato')
 			ctx.redirect('/login')
@@ -157,44 +162,47 @@ router.get('/production', async ctx => {
 	//to production, if session isn't open it will ask the user to log in
 })
 
+/**
+ * The My Profile page displays user info
+ *
+ * @name myprofile page
+ * @route {GET} /myprofile
+ */
 router.get('/myprofile', async ctx => {// show logged in users info
-	const test = ctx.session.username
-	const sql = `SELECT user FROM users WHERE user="${test}"`
-	const db = await database.open(dbName)
-	const name = await db.get(sql)
-	const picture = `./avatars/${test}.png`
+	const picture = `./avatars/${ctx.session.username}.png`
 	await ctx.render('myprofile', {
 		sessionActive: ctx.session.authorised,
-		name: name.user, imgUrl: picture
+		name: ctx.session.username, imgUrl: picture
 	})
 })
-router.get('Prod', async ctx => {
-	await ctx.render('Prod', { sessionActive: ctx.session.authorised })
-})
-// currently broken
+
+/**
+ * The production page for a certain movie
+ *
+ * @name Production page
+ * @route {GET} /Prod:movie
+ */
 router.get('/Prod/:movie', async ctx => {
+	const production = await new Production()
 	if (ctx.session.authorised) {
-		const sql = `SELECT * FROM showingSchedule WHERE movie="${ctx.params.movie}";`
-		const db = await database.open(dbName)
-		const data = await db.all(sql)
-		console.log(data)
-		console.log(ctx.params.movie)
-		await db.close()
+		const data = await production.prodDetails(ctx.params.movie, dbName)
 		await ctx.render('Prod', { info: data, sessionActive: ctx.session.authorised })
 	} else {
 		return await ctx.redirect('/login')
 	}
 }
 )
-/*  // Needs fixing, typeError: cannot read property 'avatar' of undefined????
-router.post('/myprofile', async ctx => {
 
-	const { path, type } = ctx.request.files.avatar;
-	const extension = mime.extension(type)
-	console.log(`path: ${path}`)
-	console.log(`extension: ${extension}`)
-	await fs.copy(path, `public/avatars/hsharif11.${extension}`)
+/**
+ * The My profile script to change profile pictures
+ *
+ * @name Myprofile script
+ * @route {POST} /myprofile
+ */
+router.post('/myprofile', koaBody, async ctx => {
+	const user = await new User();
+	await user.uploadPicture(ctx.request.files.avatar, ctx.session.username)
 	ctx.redirect("myprofile")
-})*/
+})
 app.use(router.routes())
-module.exports = app.listen(port, async() => console.log(`listening on port ${port}`))
+module.exports = app.listen(port, async () => console.log(`listening on port ${port}`))
