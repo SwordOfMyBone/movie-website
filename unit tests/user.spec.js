@@ -4,7 +4,6 @@
 const Accounts = require('../modules/user.js')
 
 describe('register()', () => {
-
 	test('register a valid account', async done => {
 		expect.assertions(1)
 		const account = await new Accounts()
