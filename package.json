@@ -24,20 +24,15 @@
   "dependencies": {
     "bcrypt": "^3.0.6",
     "bcrypt-promise": "^2.0.0",
-<<<<<<< HEAD
     "fs-extra": "^7.0.1",
     "handlebars": "^4.4.2",
     "koa": "^2.11.0",
     "koa-body": "^4.1.1",
-=======
-    "koa": "^2.6.2",
-    "koa-body": "^4.0.8",
->>>>>>> 086c47942af348db527399073a7605fefb5a82cc
     "koa-bodyparser": "^4.2.1",
+    "koa-hbs-renderer": "^1.2.0",
     "koa-router": "^7.4.0",
     "koa-session": "^5.12.3",
     "koa-static": "^5.0.0",
-<<<<<<< HEAD
     "koa-views": "^6.2.1",
     "markdown": "^0.5.0",
     "markdownlint-cli": "^0.18.0",
@@ -48,11 +43,6 @@
     "remark-preset-lint-recommended": "^3.0.3",
     "sqlite-async": "^1.0.12",
     "user": "0.0.0"
-=======
-    "koa-views": "^6.1.5",
-    "mime-types": "^2.1.22",
-    "sqlite-async": "^1.0.12"
->>>>>>> 086c47942af348db527399073a7605fefb5a82cc
   },
   "devDependencies": {
     "coverage": "^0.4.1",

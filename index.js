@@ -17,6 +17,7 @@ const session = require('koa-session')
 const database = require('sqlite-async')
 const fs = require('fs-extra')
 const mime = require('mime-types')
+const handlebars = require('koa-hbs-renderer')
 //const jimp = require('jimp')
 
 /* IMPORT CUSTOM MODULES */
@@ -41,15 +42,16 @@ app.use(
 )
 
 
-
 const defaultPort = 8080
 const port = process.env.PORT || defaultPort
 const dbName = 'website.db'
 const production = new Production(dbName)
 router.get('/home', async ctx => {
 	try {
-		const db = await database.open(dbName);
-		let sql = 'SELECT movie FROM movies;'
+		const db = await database.open(dbName)
+		const production = new Production(dbName)
+
+		const sql = 'SELECT movie FROM movies;'
 		const data = await db.all(sql)
 		console.log(data)
 		await ctx.render('homePage', {
@@ -85,7 +87,7 @@ router.get('/', async ctx => {
 		const data = {}
 		if (ctx.query.msg) data.msg = ctx.query.msg
 		console.log(ctx.session.authorised)
-		await ctx.redirect("/home")
+		await ctx.redirect('/home')
 	} catch (err) {
 		await ctx.render('error', { message: err.message })
 	}
@@ -171,15 +173,13 @@ router.get('/production', async ctx => {
 		const production = await new Production(dbName)
 
 		if (ctx.session.authorised !== true) {
-			console.log("Tomato")
 			ctx.redirect('/login')
-			const production = await new Production(dbName)
-			//sql = 'SELECT production, dates FROM ProductionTable'
-			//data = await this.db.get(sql)
+
 		} else {
 			console.log(true)
 			await ctx.render('Production', {
-				sessionActive: ctx.session.authorised
+				sessionActive: ctx.session.authorised,
+				movies: data
 			})
 		}
 	} catch (err) {
@@ -217,8 +217,7 @@ router.get('/Prod/:movie', async ctx => {
 		console.log(ctx.params.movie)
 		await db.close()
 		await ctx.render('Prod', { info: data, sessionActive: ctx.session.authorised })
-	}
-	else {
+	} else {
 		return await ctx.redirect('/login')
 	}
 }
@@ -238,6 +237,6 @@ router.post('/myprofile', async ctx => {
 
 
 app.use(router.routes())
-module.exports = app.listen(port, async () =>
+module.exports = app.listen(port, async() =>
 	console.log(`listening on port ${port}`)
 )
