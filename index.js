@@ -62,7 +62,6 @@ router.get('/login', async ctx => await ctx.render('login'))
 router.get('/signup', async ctx => await ctx.render('SignUp'))
 router.get('/support', async ctx => await ctx.render('support'))
 router.get('/payment', async ctx => await ctx.render('payment'))
-router.get('/production', async ctx => await ctx.render('Production'))
 router.get('/payment_complete', async ctx => await ctx.render('payment_complete'))
 router.get('/support', async ctx => await ctx.render('support', { sessionActive: ctx.session.authorised }))
 //router.get('/production', async ctx => await ctx.render("production"))
@@ -150,19 +149,28 @@ router.get('/logout', async ctx => {
 	ctx.redirect('/?msg=you are now logged out')
 })
 
-/* router.get('/ticketsavailable/:movie'), async ctx => {
+router.get('/tickets/:movie', async ctx=> {
 	try {
-		const body = ctx.request.body
-		const sql = `SELECT numberOfSeats FROM showingSchedule WHERE movie LIKE ${body.movieName};`
+		console.log(ctx.params.movie)
+		const sql = `SELECT numberOfSeats FROM showingSchedule WHERE movie LIKE "%${ctx.params.movie}%";`
 		const db = await database.open(dbName)
 		const data = await db.get(sql)
 		await db.close()
+		const movieName = ctx.params.movie
 		await ctx.render('ticketsAvailable', data)
-	} catch(err) {
-		await ctx.render('error', { message: err.message })
+	} catch (err) {
+		await ctx.render('error', {message: err.message})
 	}
-}*/ 
-// still working on the ticket availability page
+})
+
+router.post('/tickets/:movie', bodyParser(), async ctx => {
+	try {
+		const body = ctx.request.body
+		await ctx.render('ticketsAvailable', body)
+	} catch(err) {
+		await ctx.render('error', {message: err.messages})
+	}
+})
 
 router.get('/quickpayment', async ctx => {
 	try {
@@ -191,17 +199,17 @@ router.post('/payment', bodyParser(), async ctx => {
 	}})
 	
 router.get('/production', async ctx => {
-	ctx.session.authorised = true
-	ctx.redirect('/?msg=you can now select a production')
-	try{
-		let RetrieveData =`SELECT production, dates FROM ProductionTable`
-		const production = await this.db.get(sql)
+	try {
+		const db = await database.open(dbName)
+		const sql = 'SELECT movie FROM movies;'
+		const data = await db.all(sql)
+		console.log(data)
+		await ctx.render('Production', {movies: data})
+	} catch (err) {
+		ctx.body = err.message
 	}
-	catch(err){
-		await ctx.render('error',{message: err.message})
-	} //should be something like this well have to test 
-	//after the database has been successfuly fixed/created
 })
+
 
 
 
