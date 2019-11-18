@@ -158,15 +158,14 @@ router.post('/login', async ctx => {
 
 router.get('/production', async ctx => {
 	try {
-		const production = await new Production(dbName)
+		//const production = await new Production(dbName)
 		if (ctx.session.authorised !== true) {
 			ctx.redirect('/login')
 
 		} else {
 			console.log(true)
 			await ctx.render('Production', {
-				sessionActive: ctx.session.authorised,
-				movies: data
+				sessionActive: ctx.session.authorised,//movies: data
 			})
 		}
 	} catch (err) {
