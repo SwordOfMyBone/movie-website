@@ -21,8 +21,8 @@ module.exports = class Ticket {
 		try {
 			if(userID.length === 0) throw new Error('missing user id')
 			if(movieName.length === 0) throw new Error('missing movieName')
-			if(price.length == 0) throw new Error('missing price')
-			sql = `INSERT INTO tickets(userid, movieName, price) VALUES("${userID}", "${movieName}", "${price}");`
+			if(price.length === 0) throw new Error('missing price')
+			const sql = `INSERT INTO tickets(userid, movieName, price) VALUES("${userID}", "${movieName}", "${price}");`
 			await this.db.run(sql)
 			return true
 		}

@@ -13,6 +13,7 @@ const database = require('sqlite-async')
 //const fs = require('fs-extra')
 //const mime = require('mime-types')
 //const jimp = require('jimp')
+
 /* IMPORT CUSTOM MODULES */
 const User = require('./modules/user')
 const app = new Koa()
@@ -31,6 +32,7 @@ app.use(
 		{ map: { handlebars: 'handlebars' } }
 	)
 )
+
 const defaultPort = 8080
 const port = process.env.PORT || defaultPort
 const dbName = 'website.db'
@@ -56,6 +58,7 @@ router.get('/home', async ctx => {
 		ctx.body = err.message
 	}
 })
+
 router.get('/support', async ctx => await ctx.render('support', { sessionActive: ctx.session.authorised }))
 //router.get('/production', async ctx => await ctx.render("production"))
 
@@ -72,6 +75,7 @@ router.get('/logout', async ctx => {
 	ctx.redirect('/home')
 })
 
+
 /**
  * The secure home page.
  *
@@ -86,6 +90,8 @@ router.get('/', async ctx => {
 		await ctx.render('error', { message: err.message })
 	}
 })
+
+
 /**
  * The user registration page.
  *
@@ -93,6 +99,7 @@ router.get('/', async ctx => {
  * @route {GET} /register
  */
 router.get('/register', async ctx => await ctx.render('register'))
+
 
 /**
  * The script to process new user registrations.
@@ -122,12 +129,16 @@ router.post('/register', koaBody, async ctx => {
 		await ctx.render('error', { message: err.message })
 	}
 })
+
+
 router.get('/login', async ctx => {
 	const data = {}
 	if (ctx.query.msg) data.msg = ctx.query.msg
 	if (ctx.query.user) data.user = ctx.query.user
 	await ctx.render('login', data)
 })
+
+
 router.post('/login', async ctx => {
 	try {
 		const body = ctx.request.body
@@ -141,19 +152,19 @@ router.post('/login', async ctx => {
 	}
 })
 
+
+
 router.get('/production', async ctx => {
 	try {
 		const production = await new Production(dbName)
 		if (ctx.session.authorised !== true) {
-			console.log('Tomato')
 			ctx.redirect('/login')
-			const production = await new Production(dbName)
-			//sql = 'SELECT production, dates FROM ProductionTable'
-			//data = await this.db.get(sql)
+
 		} else {
 			console.log(true)
 			await ctx.render('Production', {
-				sessionActive: ctx.session.authorised
+				sessionActive: ctx.session.authorised,
+				movies: data
 			})
 		}
 	} catch (err) {
@@ -161,6 +172,7 @@ router.get('/production', async ctx => {
 	} // Will check if the session is open then it will direct the user
 	//to production, if session isn't open it will ask the user to log in
 })
+
 
 /**
  * The My Profile page displays user info
@@ -175,6 +187,7 @@ router.get('/myprofile', async ctx => {// show logged in users info
 		name: ctx.session.username, imgUrl: picture
 	})
 })
+
 
 /**
  * The production page for a certain movie
@@ -193,6 +206,7 @@ router.get('/Prod/:movie', async ctx => {
 }
 )
 
+
 /**
  * The My profile script to change profile pictures
  *
@@ -205,4 +219,5 @@ router.post('/myprofile', koaBody, async ctx => {
 	ctx.redirect("myprofile")
 })
 app.use(router.routes())
+
 module.exports = app.listen(port, async () => console.log(`listening on port ${port}`))

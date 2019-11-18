@@ -10,7 +10,7 @@ const saltRounds = 10
 module.exports = class User {
 
 	constructor(dbName = ':memory:') {
-		return (async () => {
+		return (async() => {
 			this.db = await sqlite.open(dbName)
 			// we need this table to store the user accounts
 			let sql = 'CREATE TABLE IF NOT EXISTS "users" ( "id" INTEGER PRIMARY KEY AUTOINCREMENT, "pass" TEXT, "user" TEXT );'

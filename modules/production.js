@@ -4,6 +4,7 @@ let sql = ''
 let db = ''
 module.exports = class Production {
 	constructor(dbName = ':memory:') {
+
 		return (async () => {
 			this.db = await sqlite.open(dbName)
 			let sql = 'CREATE TABLE IF NOT EXISTS "movies" ("movie" TEXT PRIMARY KEY, ' +
@@ -18,6 +19,7 @@ module.exports = class Production {
 			return this
 		})()
 	}
+
 
 	async prodDetails(movie, dbName) {
 		try {
@@ -39,7 +41,7 @@ module.exports = class Production {
 			db.all(sql, (err, rows) => {
 				if (err) console.error(err.message)
 				if (!err) console.log(rows)
-			})
+s			})
 		} catch (err) {
 			throw err
 		}
