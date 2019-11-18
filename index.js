@@ -27,7 +27,7 @@ const Production = require('./modules/production')
 /* CONFIGURING THE MIDDLEWARE */
 app.keys = ['darkSecret']
 app.use(staticDir('public'))
-// app.use(bodyParser())
+app.use(bodyParser())
 app.use(session(app))
 app.use(
 	views(
@@ -167,7 +167,7 @@ router.get('/logout', async ctx => {
 
 })
 
-router.post('/payment', koaBody, async ctx => {
+router.post('/payment', bodyParser(), async ctx => {
 	try {
 
 		console.log(ctx.request.body)
