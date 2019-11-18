@@ -16,6 +16,7 @@ const database = require('sqlite-async')
 
 /* IMPORT CUSTOM MODULES */
 const User = require('./modules/user')
+const Cart = require('./modules/shoppingCart.js')
 const app = new Koa()
 const router = new Router()
 const Production = require('./modules/production')
@@ -146,12 +147,13 @@ router.post('/login', async ctx => {
 		await user.login(body.user, body.pass)
 		ctx.session.authorised = true
 		ctx.session.username = body.user
+		ctx.session.cart = new Cart
+		console.log(ctx.session)
 		return ctx.redirect('/?msg=you are now logged in...', body.user)
 	} catch (err) {
 		await ctx.render('error', { message: err.message })
 	}
 })
-
 
 
 router.get('/production', async ctx => {
@@ -214,10 +216,10 @@ router.get('/Prod/:movie', async ctx => {
  * @route {POST} /myprofile
  */
 router.post('/myprofile', koaBody, async ctx => {
-	const user = await new User();
+	const user = await new User()
 	await user.uploadPicture(ctx.request.files.avatar, ctx.session.username)
-	ctx.redirect("myprofile")
+	ctx.redirect('myprofile')
 })
 app.use(router.routes())
 
-module.exports = app.listen(port, async () => console.log(`listening on port ${port}`))
+module.exports = app.listen(port, async() => console.log(`listening on port ${port}`))
