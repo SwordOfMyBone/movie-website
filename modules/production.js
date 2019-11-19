@@ -1,18 +1,18 @@
 'use strict'
 const sqlite = require('sqlite-async')
 let sql = ''
-let db = ''
+const db = ''
 module.exports = class Production {
 	constructor(dbName = ':memory:') {
 
-		return (async () => {
+		return (async() => {
 			this.db = await sqlite.open(dbName)
 			let sql = 'CREATE TABLE IF NOT EXISTS "movies" ("movie" TEXT PRIMARY KEY, ' +
 				'"Poster" LONGBLOB, "Details" TEXT, UNIQUE("movie"));'
 			await this.db.run(sql)
 			sql = 'CREATE TABLE IF NOT EXISTS "showingSchedule"("ShowNumber" INTEGER PRIMARY KEY AUTOINCREMENT, "date" TEXT,' +
 				'"time" TEXT,"movie" TEXT, numberOfSeats INTEGER, FOREIGN KEY("movie") REFERENCES "movies"("movie"));'
-			//  'CREATE TABLE IF NOT EXISTS "movieDisplayRoom"("displayRoom" INTEGER PRIMARY KEY, 
+			//  'CREATE TABLE IF NOT EXISTS "movieDisplayRoom"("displayRoom" INTEGER PRIMARY KEY,
 			//"numberOfSeats" INTEGER,FOREIGN KEY ("ShowNumber") REFERENCES "showingSchedule"(ShowNumber));'
 			await this.db.run(sql)
 
@@ -29,8 +29,7 @@ module.exports = class Production {
 			console.log(data)
 			await db.close()
 			return data
-		}
-		catch (err) {
+		} catch (err) {
 			throw err
 		}
 	}
@@ -41,7 +40,8 @@ module.exports = class Production {
 			db.all(sql, (err, rows) => {
 				if (err) console.error(err.message)
 				if (!err) console.log(rows)
-s			})
+				s
+			})
 		} catch (err) {
 			throw err
 		}
