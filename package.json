@@ -17,8 +17,8 @@
   "jest": {
     "projects": [
       "<rootDir>/jest-test.config.js"
-    ]
-  },
+    ]},
+    
   "author": "",
   "license": "ISC",
   "dependencies": {
