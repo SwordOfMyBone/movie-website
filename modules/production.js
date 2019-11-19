@@ -1,5 +1,7 @@
 'use strict'
 const sqlite = require('sqlite-async')
+const fs = require('fs-extra')
+const mime = require('mime-types')
 let sql = ''
 let db = ''
 module.exports = class Production {
@@ -41,11 +43,33 @@ module.exports = class Production {
 			db.all(sql, (err, rows) => {
 				if (err) console.error(err.message)
 				if (!err) console.log(rows)
-s			})
+			})
 		} catch (err) {
 			throw err
 		}
 	}
+
+	async createShow(movie, date, time, dbName) {
+		try {
+			let sql = `INSERT INTO movies(movie) VALUES("${movie}");`
+			const db = await sqlite.open(dbName)
+			await db.run(sql)
+			sql = `INSERT INTO showingSchedule(movie, date, time) VALUES("${movie}", "${date}", "${time}");`
+			await db.run(sql)
+		}
+		catch (err) {
+			throw err
+		}
+	}
+
+	async moviePic(pathntype, movie) {
+		const { path, type } = pathntype
+		const extension = mime.extension(type)
+		console.log(`path: ${path}`)
+		console.log(`extension: ${extension}`)
+		await fs.copy(path, `public/img/${movie}.${extension}`)
+	}
+
 }
 
 
