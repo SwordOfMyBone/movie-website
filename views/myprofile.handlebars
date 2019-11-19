@@ -48,18 +48,25 @@
 		<tr>
 			<td>Profile Picture:</td>
 			<td><img src={{imgUrl}} alt="??" width="100" height="100"></td>
-			<td>
-				<form action="/myprofile" enctype="multipart/form-data" method="post">
-					<p><input type="file" name="avatar"></p>
-					<p><input type="submit" value="Change"></p>
-				</form>
-			</td>
 
 		</tr>
 		<tr>
 			<td>Name:</td>
 			<td>{{name}}</td>
 		</tr>
+		{{#if admin}}
+		<form action="/myprofile" enctype="multipart/form-data" method="post">
+			<p>Movie Name<input type="text" name="movie"></p>
+			<p>Date Available <input type="text" name="date"></p>
+			<p>Time Available<input type="text" name="time"></p>
+
+			<p><input type="file" name="avatar"></p>
+			<p><input type="submit" value="ADD"></p>
+		</form>
+		<tr>
+			<td>THIS IS AN ADMIN ACCOUNT</td>
+		</tr>
+		{{/if}}
 		<a href="/logout">Log Out</a>
 	</table>
 

@@ -47,6 +47,7 @@ const dbName = 'website.db'
  */
 router.get('/home', async ctx => {
 	try {
+		const production = await new Production(dbName)
 		const db = await database.open(dbName)
 		const sql = 'SELECT movie FROM movies'
 		const data = await db.all(sql)
@@ -148,7 +149,7 @@ router.post('/login', async ctx => {
 		ctx.session.authorised = true
 		ctx.session.username = body.user
 		ctx.session.cart = new Cart
-		console.log(ctx.session)
+		//console.log(ctx.session)
 		return ctx.redirect('/?msg=you are now logged in...', body.user)
 	} catch (err) {
 		await ctx.render('error', { message: err.message })
@@ -158,15 +159,14 @@ router.post('/login', async ctx => {
 
 router.get('/production', async ctx => {
 	try {
-		const production = await new Production(dbName)
+		//const production = await new Production(dbName)
 		if (ctx.session.authorised !== true) {
 			ctx.redirect('/login')
 
 		} else {
 			console.log(true)
 			await ctx.render('Production', {
-				sessionActive: ctx.session.authorised,
-				movies: data
+				sessionActive: ctx.session.authorised,//movies: data
 			})
 		}
 	} catch (err) {
@@ -184,9 +184,12 @@ router.get('/production', async ctx => {
  */
 router.get('/myprofile', async ctx => {// show logged in users info
 	const picture = `./avatars/${ctx.session.username}.png`
+	const user = await new User()
+	const data = await user.isAdmin(ctx.session.username, dbName)
+	console.log(data)
 	await ctx.render('myprofile', {
 		sessionActive: ctx.session.authorised,
-		name: ctx.session.username, imgUrl: picture
+		name: ctx.session.username, imgUrl: picture, admin: data
 	})
 })
 
@@ -216,10 +219,12 @@ router.get('/Prod/:movie', async ctx => {
  * @route {POST} /myprofile
  */
 router.post('/myprofile', koaBody, async ctx => {
-	const user = await new User()
-	await user.uploadPicture(ctx.request.files.avatar, ctx.session.username)
+	const body = ctx.request.body
+	const show = await new Production()
+	await show.createShow(body.movie, body.date, body.time, dbName)
+	await show.moviePic(ctx.request.files.avatar, body.movie)
 	ctx.redirect('myprofile')
 })
 app.use(router.routes())
 
-module.exports = app.listen(port, async() => console.log(`listening on port ${port}`))
+module.exports = app.listen(port, async () => console.log(`listening on port ${port}`))
