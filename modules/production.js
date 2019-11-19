@@ -15,7 +15,7 @@ module.exports = class Production
 			await this.db.run(sql)
 			sql = 'CREATE TABLE IF NOT EXISTS "showingSchedule"("ShowNumber" INTEGER PRIMARY KEY AUTOINCREMENT, "date" TEXT,' +
 				'"time" TEXT,"movie" TEXT, numberOfSeats INTEGER, FOREIGN KEY("movie") REFERENCES "movies"("movie"));'
-			//  'CREATE TABLE IF NOT EXISTS "movieDisplayRoom"("displayRoom" INTEGER PRIMARY KEY, 
+			//  'CREATE TABLE IF NOT EXISTS "movieDisplayRoom"("displayRoom" INTEGER PRIMARY KEY,
 			//"numberOfSeats" INTEGER,FOREIGN KEY ("ShowNumber") REFERENCES "showingSchedule"(ShowNumber));'
 			await this.db.run(sql)
 			return this
@@ -31,8 +31,7 @@ module.exports = class Production
 			console.log(data)
 			await db.close()
 			return data
-		}
-		catch (err) {
+		} catch (err) {
 			throw err
 		}
 	}

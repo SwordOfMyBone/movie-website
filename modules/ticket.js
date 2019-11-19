@@ -25,16 +25,14 @@ module.exports = class Ticket {
 			const sql = `INSERT INTO tickets(userid, movieName, price) VALUES("${userID}", "${movieName}", "${price}");`
 			await this.db.run(sql)
 			return true
-		}
-
-		catch(err) {
+		} catch(err) {
 			throw err
 		}
 	}
 
 
 	// Gets tickets for specific user.
-	// Possible expansion could include a function that gets the tickets and converts it into a pretty formatted form? (perhaps for the nodemailer task?) 
+	// Possible expansion could include a function that gets the tickets and converts it into a pretty formatted form? (perhaps for the nodemailer task?)
 	async getTickets(userID) {
 		try {
 			const sql = 'SELECT item FROM items WHERE list="food"'
@@ -44,9 +42,7 @@ module.exports = class Ticket {
 			})
 
 			return rows
-		}
-
-		catch(err) {
+		} catch(err) {
 			throw err
 		}
 	}

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
+    <p>There are {{numberOfSeats}} tickets left for {{movieName}} on the date chosen.</p>
+    <p>Please choose how many you'd like, up to the maximum possible:</p>
+    <form action="/payment" method="post">
+        <input name="tickets">
+        <input type="submit">
+    </form>
+    <a href="/home"><button class="contbutton1">Back to the homepage</button></a>
+</body>

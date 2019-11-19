@@ -12,10 +12,9 @@ module.exports = class Cart {
 	async add(item) {
 		try{
 			//if not found in cart add a new one. Also add error checking
-			if (this.cart.get(item) === undefined){
-				this.cart.set(item, {"title":item.name, "qty":1})
-			}
-			else{
+			if (this.cart.get(item) === undefined) {
+				this.cart.set(item, {'title': item.name, 'qty': 1})
+			} else{
 				const x = this.cart.get(item)
 				x.qty += 1
 				this.cart.set(item, x)
@@ -39,32 +38,30 @@ module.exports = class Cart {
 
 	async decrement(item) {
 		try{
-			let current = this.cart.get(item)
+			const current = this.cart.get(item)
 			if (current.qty === 1) {
 				this.cart.delete(item)
 				return
 			}
 			current.qty -= 1
 			this.cart.set(item, current)
-		}
-		catch(err) {
+		} catch(err) {
 			throw err
 		}
 	}
 
 	async remove(item) {
 		try{
-			if (this.cart.get(item) === undefined){
+			if (this.cart.get(item) === undefined) {
 				throw new Error('ticket not in cart')
 			}
 			this.cart.delete(item)
-		}
-		catch(err){
+		} catch(err) {
 			throw err
 		}
 	}
 
-	async count (){
+	async count() {
 		return this.cart.size
 	}
 }

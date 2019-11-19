@@ -39,61 +39,40 @@
 
 <body>
 
-	<form class="productions" action="/production" method="post">
-		<p>Please select one of the following productions: </p>
-
-		<p class="production"> Avatar</p>
-		<img src="/img/Avatarr1.jpg" class="Images" alt="Avatar">
-		<p>Display day &amp; time: </p>
-
-		<input list="AvatarTimetable">
-		<datalist id="AvatarTimetable">
-			<option value="03/12 3:30pm"></option>
-			<option value="04/12 5:30pm"></option>
-		</datalist>
-
-		<p class="production"> Scary Movie</p>
-		<img src="/img/ScaryMovie.jpg" class="Images" alt="Scary Movie">
-		<p>Display day &amp; time: </p>
-
-		<input list="DateAndTime">
-		<datalist id="DateAndTime">
-			<option value="03/12 3:30pm"></option>
-			<option value="04/12 5:30pm"></option>
-		</datalist>
-
-		<p class="production"> Scary Movie</p>
-		<img src="/img/ScaryMovie.jpg" class="Images" alt="Scary Movie">
-		<p>Display day &amp; time:</p>
-
-		<input list="Scary2">
-		<datalist id="Scary2">
-			<option value="05/12 3:30pm"></option>
-			<option value="06/12 5:30pm"></option>
-		</datalist>
-
-		<p class="production"> Scary Movie</p>
-		<img src="/img/ScaryMovie.jpg" class="Images" alt="Scary Movie">
-		<p>Display day &amp; time:</p>
-		<input list="Scary3">
-		<datalist id="Scary3">
-			<option value="03/12 3:30pm"></option>
-			<option value="04/12 5:30pm"></option>
-		</datalist>
-		<p class="production"> Scary Movie</p>
-		<img src="/img/ScaryMovie.jpg" class="Images" alt="Scary Movie">
-		<p>Display day &amp; time: </p>
-
-		<input list="Scary3">
-		<datalist id="Scary3">
-			<option value="05/12 3:30pm"></option>
-			<option value="06/12 5:30pm"></option>
-
-		</datalist>
-
-	</form>
+<form class="productions" action="/production" method="post">
+<p>Please select one of the following productions: </p>
 
 
-	<p class="footer">We are Xtheatre! © All copyrights are reserved.</p>
+<p class="production"> Example</p>
+<img src="/img/Avatarr1.jpg" class="Images" alt="Avatar">
+<p>Choose a date: </p>
+<form action="/tickets/{{this.movie}}" method="post">
+<input name="movieTime" list="AvatarTimetable">
+<datalist id="AvatarTimetable">
+    <option value="10/04 5:30pm">
+    <option value="05/06 3:30pm">
+</datalist><br>
+<input type="submit">
+</form>
+
+{{#each movies}}
+
+<p class="production"> {{this.movie}}</p>
+<img src="/img/Avatarr1.jpg" class="Images" alt="Avatar">
+<p>Choose a date: </p>
+<form action="/tickets/{{this.movie}}" method="get">
+<input name="movieTime" list="AvatarTimetable">
+<datalist id="AvatarTimetable">
+    <option value="10/04 5:30pm">
+    <option value="05/06 3:30pm">
+</datalist><br>
+<input type="submit">
+</form>
+
+{{/each}}
+
+
+<a href="/home"><button class="contbutton1">Back to the homepage</button></a>
+<p class="footer">We are Xtheatre! © All copyrights are reserved.</p>
 
 </body>
