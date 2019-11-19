@@ -17,7 +17,6 @@ module.exports = class User {
 			await this.db.run(sql)
 			sql = 'CREATE TABLE IF NOT EXISTS "card_details" ( "Card number" INTEGER, "Expiry Date" TEXT, "Security Code" INTEGER, "id" INTEGER, PRIMARY KEY("Card number"), FOREIGN KEY("id") REFERENCES "users"("id"));'
 			await this.db.run(sql)
-			await this.db.run(sql2)
 			return this
 		})()
 	}
