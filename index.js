@@ -86,8 +86,16 @@ router.get('/', async ctx => {
 		if (ctx.query.msg) data.msg = ctx.query.msg
 		console.log(ctx.session.authorised)
 		await ctx.redirect('/home')
-	} catch (err) {
+	/* } catch (err) {
 		await ctx.render('error', { message: err.message })
+		//if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
+		const data = {}
+		if (ctx.query.msg) data.msg = ctx.query.msg
+		console.log(ctx.session.authorised)
+		await ctx.render('homePage') */ 
+		// wasn't sure which version we keep
+	} catch(err) {
+		await ctx.render('error', {message: err.message})
 	}
 })
 /**
@@ -237,6 +245,7 @@ router.get('/production', async ctx => {
 })
 
 router.get('/myprofile', async ctx => {// show logged in users info
+router.get('/myprofile', async ctx => {
 	const test = ctx.session.username
 	const sql = `SELECT user FROM users WHERE user="${test}"`
 	const db = await database.open(dbName)
