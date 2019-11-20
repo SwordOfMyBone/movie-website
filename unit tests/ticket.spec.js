@@ -35,3 +35,13 @@ describe('addToDb()', () => {
 	})
 
 })
+
+
+describe('getTickets()', () => {
+	test('Adding specific ticket for user', async done => {
+		const ticket = await new Tickets()
+		const getTickets = await ticket.getTickets('')
+		expect(getTickeks).toBe(true)
+		done()
+	})
+})

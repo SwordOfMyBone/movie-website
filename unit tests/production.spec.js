@@ -25,4 +25,29 @@ describe('prodDetails()', () =>
 
  
 
+describe('showTime'(), () => {
+
+	test('Enter the details to dB', async done => {
+		expect.assertions(4)
+		const production = await new Production()
+		const moviePic = await production.moviePic('Advatar,25/11/2019,12:00pm')
+		expect(moviePic).toBe(true)
+		done()
+	})
+
+})
+
+
+ 
+
+describe('createshow()', () => {
+
+	test('', async done => {
+		const production = await new Production()
+		const createshow = await production.createshow('.png')
+		expect(createshow).toBe(true)
+		done()
+	})
+
+})
 
