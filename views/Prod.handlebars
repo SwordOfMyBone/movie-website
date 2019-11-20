@@ -59,7 +59,9 @@
             <th>Seats Available : {{this.numberOfSeats}}</th>
         </tr>
         <tr>
-            <th><a href="/booking/{{this.time}}"> <button class="contbutton1">Book This Show</button></a></th>
+            <th><a href="/tickets/{{this.movie}}/{{this.date}}/{{this.time}}"> <button class="contbutton1">Book
+                        This Show</button></a>
+            </th>
         </tr>
         {{/each}}
     </table>
