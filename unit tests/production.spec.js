@@ -24,30 +24,28 @@ describe('prodDetails()', () =>
 })
 
  
-
-describe('showTime'(), () => {
+describe('createShow()', () => {
 
 	test('Enter the details to dB', async done => {
 		expect.assertions(4)
 		const production = await new Production()
-		const moviePic = await production.moviePic('Advatar,25/11/2019,12:00pm')
-		expect(moviePic).toBe(true)
+		const createShow = await production.createShow('Advatar,25/11/2019,12:00pm')
+		expect(createShow).toBe(true)
 		done()
 	})
 
 })
 
+describe('showTime()', () => {
 
- 
-
-describe('createshow()', () => {
-
-	test('', async done => {
+	test('Is the production showing', async done => {
 		const production = await new Production()
-		const createshow = await production.createshow('.png')
-		expect(createshow).toBe(true)
+		const showTime = await production.showTime('Movie')
+		expect(showTime).toBe(true)
 		done()
 	})
 
 })
+
+
 
