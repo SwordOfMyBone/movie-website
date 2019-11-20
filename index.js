@@ -98,16 +98,16 @@ router.get('/logout', async ctx => {
 router.get('/', async ctx => {
 	try {
 		await ctx.redirect('/home')
-	/* } catch (err) {
-		await ctx.render('error', { message: err.message })
-		//if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
-		const data = {}
-		if (ctx.query.msg) data.msg = ctx.query.msg
-		console.log(ctx.session.authorised)
-		await ctx.render('homePage') */ 
+		/* } catch (err) {
+			await ctx.render('error', { message: err.message })
+			//if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
+			const data = {}
+			if (ctx.query.msg) data.msg = ctx.query.msg
+			console.log(ctx.session.authorised)
+			await ctx.render('homePage') */
 		// wasn't sure which version we keep
-	} catch(err) {
-		await ctx.render('error', {message: err.message})
+	} catch (err) {
+		await ctx.render('error', { message: err.message })
 	}
 })
 
@@ -179,32 +179,35 @@ router.get('/logout', async ctx => {
 	ctx.redirect('/?msg=you are now logged out')
 })
 
-router.get('/tickets/:movie', async ctx=> {
+router.get('/tickets/:movie/:date/:time', async ctx => {
 	try {
-		console.log(ctx.params.movie)
-		const sql = `SELECT numberOfSeats FROM showingSchedule WHERE movie LIKE "%${ctx.params.movie}%";`
+		//console.log(ctx.params.movie)
+		const sql = `SELECT numberOfSeats FROM showingSchedule WHERE movie LIKE "%${ctx.params.movie}%" AND date LIKE "%${ctx.params.date}%" AND time LIKE "%${ctx.params.time}%";`
+		// console.log(ctx.params.time)
+		//console.log(ctx.params.date)
 		const db = await database.open(dbName)
 		const data = await db.get(sql)
 		await db.close()
 		const movieName = ctx.params.movie
 		await ctx.render('ticketsAvailable', data)
 	} catch (err) {
-		await ctx.render('error', {message: err.message})
+		await ctx.render('error', { message: err.message })
 	}
 })
 
 router.post('/tickets/:movie', async ctx => {
 	try {
 		const body = ctx.request.body
+		console.log(ctx.params.movie)
 		await ctx.render('ticketsAvailable', body)
-	} catch(err) {
-		await ctx.render('error', {message: err.messages})
+	} catch (err) {
+		await ctx.render('error', { message: err.messages })
 	}
 })
 
 router.get('/quickpayment', async ctx => {
 	try {
-		if(ctx.session.username) {
+		if (ctx.session.username) {
 			console.log(ctx.session.username)
 			const user = await new User(dbName)
 			let userid = await user.getId(ctx.session.username)
@@ -213,6 +216,7 @@ router.get('/quickpayment', async ctx => {
 			await ctx.render('quickpayment', cardDetails)}
 	} catch(err) {
 		await ctx.render('error', {message: err.message})
+
 	}
 })
 
@@ -221,17 +225,18 @@ router.post('/payment', async ctx => {
 		console.log(ctx.request.body)
 		const body = ctx.request.body
 		await ctx.render('payment', body)
-	} catch(err) {
-	    err.message
-	}})
-	
+	} catch (err) {
+		err.message
+	}
+})
+
 router.get('/production', async ctx => {
 	try {
 		const db = await database.open(dbName)
 		const sql = 'SELECT movie FROM movies;'
 		const data = await db.all(sql)
 		console.log(data)
-		await ctx.render('Production', {movies: data})
+		await ctx.render('Production', { movies: data })
 	} catch (err) {
 		ctx.body = err.message
 	}

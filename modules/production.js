@@ -3,11 +3,12 @@ const sqlite = require('sqlite-async')
 const fs = require('fs-extra')
 const mime = require('mime-types')
 let sql = ''
-const db = ''
-module.exports = class Production {
-	constructor(dbName = ':memory:') {
+let db = ''
+module.exports = class Production 
 
-		return (async() => {
+{
+	constructor(dbName = ':memory:') {
+		return (async () => {
 			this.db = await sqlite.open(dbName)
 			let sql = 'CREATE TABLE IF NOT EXISTS "movies" ("movie" TEXT PRIMARY KEY, ' + '"Poster" LONGBLOB, "Details" TEXT, UNIQUE("movie"));'
 			await this.db.run(sql)
@@ -15,7 +16,6 @@ module.exports = class Production {
 			//  'CREATE TABLE IF NOT EXISTS "movieDisplayRoom"("displayRoom" INTEGER PRIMARY KEY,
 			//"numberOfSeats" INTEGER,FOREIGN KEY ("ShowNumber") REFERENCES "showingSchedule"(ShowNumber));'
 			await this.db.run(sql)
-
 			return this
 		})()
 	}
