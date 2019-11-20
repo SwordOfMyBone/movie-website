@@ -133,8 +133,7 @@ router.post('/register', koaBody, async ctx => {
 		const body = ctx.request.body // extract the data from the request
 		console.log(body)
 		const user = await new User(dbName) // call the functions in the module
-		if ( // Check for optional input fields, if card info is entered add it to user register params.
-			body['card number'].length !== 0 &&
+		if (body['card number'].length !== 0 &&
 			body.expiry.length !== 0 &&
 			body['security code'].length !== 0
 		) {
@@ -194,7 +193,7 @@ router.get('/tickets/:movie', async ctx=> {
 	}
 })
 
-router.post('/tickets/:movie', bodyParser(), async ctx => {
+router.post('/tickets/:movie', async ctx => {
 	try {
 		const body = ctx.request.body
 		await ctx.render('ticketsAvailable', body)
@@ -207,20 +206,17 @@ router.get('/quickpayment', async ctx => {
 	try {
 		if(ctx.session.username) {
 			console.log(ctx.session.username)
-			const sql = `SELECT id FROM users WHERE user LIKE "%${ctx.session.username}%";`
-			const db = await database.open(dbName)
-			const Username = await db.all(sql)
-			const sql2 = `SELECT "Card number", "Expiry Date", "Security Code" FROM card_details WHERE id LIKE "%${Username[0].id}%";`
-			const cardDetails = await db.all(sql2)
-			await db.close()
-			console.log('these are the payment details', cardDetails[0])
-			await ctx.render('quickpayment', cardDetails[0])}
+			const user = await new User(dbName)
+			let userid = await user.getId(ctx.session.username)
+			let cardDetails = await user.getCard(userid)
+			console.log('these are the payment details', cardDetails)
+			await ctx.render('quickpayment', cardDetails)}
 	} catch(err) {
 		await ctx.render('error', {message: err.message})
 	}
 })
 
-router.post('/payment', bodyParser(), async ctx => {
+router.post('/payment', async ctx => {
 	try {
 		console.log(ctx.request.body)
 		const body = ctx.request.body
@@ -309,7 +305,7 @@ router.get('/Prod/:movie', async ctx => {
  * @name Myprofile script
  * @route {POST} /myprofile
  */
-router.post('/myprofile', koaBody, async ctx => {
+router.post('/myprofile', async ctx => {
 	const body = ctx.request.body
 	const show = await new Production()
 	await show.createShow(body.movie, body.date, body.time, dbName)

@@ -47,8 +47,8 @@
 <img src="/img/Avatarr1.jpg" class="Images" alt="Avatar">
 <p>Choose a date: </p>
 <form action="/tickets/{{this.movie}}" method="post">
-<input name="movieTime" list="AvatarTimetable">
-<datalist id="AvatarTimetable">
+<input name="movieTime" list="AvatarTimetable.">
+<datalist id="AvatarTimetable.">
     <option value="10/04 5:30pm">
     <option value="05/06 3:30pm">
 </datalist><br>
@@ -61,11 +61,11 @@
 <img src="/img/Avatarr1.jpg" class="Images" alt="Avatar">
 <p>Choose a date: </p>
 <form action="/tickets/{{this.movie}}" method="get">
-<input name="movieTime" list="AvatarTimetable">
 <datalist id="AvatarTimetable">
     <option value="10/04 5:30pm">
     <option value="05/06 3:30pm">
 </datalist><br>
+<input list="AvatarTimetable">
 <input type="submit">
 </form>
 

@@ -13,10 +13,10 @@ module.exports = class User {
 		return (async () => {
 			this.db = await sqlite.open(dbName)
 			// we need this table to store the user accounts
-			let sql = 'CREATE TABLE IF NOT EXISTS "users" ( "id" INTEGER PRIMARY KEY AUTOINCREMENT, "pass" TEXT, "user" TEXT, "admin" BOOLEAN NOT NULL DEFAULT 0);'
+			const sql = 'CREATE TABLE IF NOT EXISTS "users" ( "id" INTEGER PRIMARY KEY AUTOINCREMENT, "pass" TEXT, "user" TEXT, "admin" BOOLEAN NOT NULL DEFAULT 0);'
 			await this.db.run(sql)
-			sql = 'CREATE TABLE IF NOT EXISTS "card_details" ( "Card number" INTEGER, "Expiry Date" TEXT, "Security Code" INTEGER, "id" INTEGER, PRIMARY KEY("Card number"), FOREIGN KEY("id") REFERENCES "users"("id"));'
-			await this.db.run(sql)
+			const sql2 = 'CREATE TABLE IF NOT EXISTS "card_details" ( "Card number" INTEGER, "Expiry Date" TEXT, "Security Code" INTEGER, "id" INTEGER, PRIMARY KEY("Card number"), FOREIGN KEY("id") REFERENCES "users"("id"));'
+			await this.db.run(sql2)
 			return this
 		})()
 	}
@@ -95,4 +95,42 @@ module.exports = class User {
 		}
 	}
 
+	async getId(username){
+		try{
+			let sql = `SELECT id FROM users WHERE user = "${username}";`
+			let id = {}
+			await this.db.each(sql, (err, rows) => {
+				if (err){
+					throw err
+				}
+				if (!err){
+					id = rows.id
+				}
+			})
+			return id
+		}
+		catch (err) {
+			throw err
+		}
+
+	}
+
+	async getCard(id){
+		try{
+			let sql = `SELECT "Card number", "Expiry Date", "Security Code" FROM card_details WHERE id = "${id}";`
+			let cardDetails = {}
+			await this.db.each(sql, (err, rows) => {
+				if (err){
+					throw err
+				}
+				if (!err){
+					cardDetails = rows
+				}
+			})
+			return cardDetails
+		}
+		catch (err){
+			throw err
+		}
+	}
 }
