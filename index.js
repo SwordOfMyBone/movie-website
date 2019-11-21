@@ -208,7 +208,6 @@ router.post('/tickets/:movie', async ctx => {
 router.get('/quickpayment', async ctx => {
 	try {
 		if (ctx.session.username) {
-			console.log(ctx.session.username)
 			const user = await new User(dbName)
 			let userid = await user.getId(ctx.session.username)
 			let cardDetails = await user.getCard(userid)
@@ -223,6 +222,7 @@ router.get('/quickpayment', async ctx => {
 router.post('/payment', async ctx => {
 	try {
 		console.log(ctx.request.body)
+		console.log(ctx.params)
 		const body = ctx.request.body
 		await ctx.render('payment', body)
 	} catch (err) {

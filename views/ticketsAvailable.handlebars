@@ -7,8 +7,9 @@
     <p>There are {{numberOfSeats}} tickets left for {{movieName}} on the date chosen.</p>
     <p>Please choose how many you'd like, up to the maximum possible:</p>
     <form action="/payment" method="post">
-        <input name="tickets">
-        <input type="submit">
+        <input name="tickets" >
+        <input name = "submit" type="submit">
     </form>
+    <a href="/cart/{{this.movie}}/{{this.date}}/{{this.time}}"> <button class="contbutton1"> Add to cart </button></a> <br>
     <a href="/home"><button class="contbutton1">Back to the homepage</button></a>
 </body>
