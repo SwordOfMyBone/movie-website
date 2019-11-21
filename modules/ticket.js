@@ -8,8 +8,8 @@ module.exports = class Ticket {
 	constructor(dbName = ':memory:') {
 		return (async() => {
 			this.db = await sqlite.open(dbName)
-			// we need this table to store the user accounts
-			const sql = 'CREATE TABLE IF NOT EXISTS "tickets" ( "Id" INTEGER PRIMARY KEY AUTOINCREMENT, "movieName" TEXT, "userid" INTEGER, "price" INTEGER, FOREIGN KEY("userid") REFERENCES "users"("id") );'
+			// we need this table to store the user  accounts
+			const sql = 'CREATE TABLE IF NOT EXISTS "tickets" ( "Id" INTEGER PRIMARY KEY AUTOINCREMENT, "movieName" TEXT, "userid" INTEGER, "price" TEXT, "date" TEXT, "time" TEXT, "priceBand" TEXT, FOREIGN KEY("userid") REFERENCES "users"("id") );'
 			await this.db.run(sql)
 			return this
 		})()
@@ -42,6 +42,18 @@ module.exports = class Ticket {
 			})
 
 			return rows
+		} catch(err) {
+			throw err
+		}
+	}
+
+	async getBands(movie, date, time, specificBand) {
+		try {
+			const sql = `SELECT COUNT(Id) FROM tickets WHERE movieName LIKE "${movie}" AND date LIKE "${date}" AND time LIKE "${time}" AND priceBand LIKE "${specificBand}";`
+			const ticketsRemaining = await this.db.get(sql)
+			console.log(sql)
+			console.log(ticketsRemaining)
+			return ticketsRemaining['COUNT(Id)']
 		} catch(err) {
 			throw err
 		}

@@ -20,6 +20,7 @@ const Cart = require('./modules/shoppingCart.js')
 const app = new Koa()
 const router = new Router()
 const Production = require('./modules/production')
+const Ticket = require('./modules/ticket')
 
 /* CONFIGURING THE MIDDLEWARE */
 app.keys = ['darkSecret']
@@ -181,15 +182,18 @@ router.get('/logout', async ctx => {
 
 router.get('/tickets/:movie/:date/:time', async ctx => {
 	try {
-		//console.log(ctx.params.movie)
+		const ticket = await new Ticket(dbName)
+		//await ticket.addToDb('1', 'Avatar', '40')
 		const sql = `SELECT numberOfSeats FROM showingSchedule WHERE movie LIKE "%${ctx.params.movie}%" AND date LIKE "%${ctx.params.date}%" AND time LIKE "%${ctx.params.time}%";`
 		// console.log(ctx.params.time)
 		//console.log(ctx.params.date)
 		const db = await database.open(dbName)
 		const data = await db.get(sql)
 		await db.close()
-		const movieName = ctx.params.movie
-		await ctx.render('ticketsAvailable', data)
+		const low_priced = await ticket.getBands(ctx.params.movie, ctx.params.date, ctx.params.time, 'low')
+		const medium_priced = await ticket.getBands(ctx.params.movie, ctx.params.date, ctx.params.time, 'medium')
+		const high_priced = await ticket.getBands(ctx.params.movie, ctx.params.date, ctx.params.time, 'high')
+		await ctx.render('ticketsAvailable', {tickets: data['numberOfSeats'], movie: ctx.params.movie, lowTickets: low_priced, mediumTickets: medium_priced, highTickets: high_priced})
 	} catch (err) {
 		await ctx.render('error', { message: err.message })
 	}
@@ -224,7 +228,8 @@ router.post('/payment', async ctx => {
 	try {
 		console.log(ctx.request.body)
 		const body = ctx.request.body
-		await ctx.render('payment', body)
+		const numberOfTickets = body.tickets.reduce((acc, val) => acc + Number(val), 0)//the reduce function sums the number of tickets
+		await ctx.render('payment', {numberOfTickets: numberOfTickets})
 	} catch (err) {
 		err.message
 	}
