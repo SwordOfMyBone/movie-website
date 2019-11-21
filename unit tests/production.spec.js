@@ -9,7 +9,7 @@ describe('prodDetails()', () =>
 	test('No Films Within dB', async done => {
 		expect.assertions(1)
 		const production = await new Production()
-		await expect( production.prodDetails('The delusion',"" ))
+		await expect( production.prodDetails('Avatar',"" ))
 			.rejects.toEqual( Error('missing Movie') ) 
 		done()
 	})
@@ -27,10 +27,11 @@ describe('prodDetails()', () =>
 describe('createShow()', () => {
 
 	test('Enter the details to dB', async done => {
-		expect.assertions(4)
+		expect.assertions(1)
 		const production = await new Production()
-		const createShow = await production.createShow('Advatar,25/11/2019,12:00pm')
-		expect(createShow).toBe(true)
+		await production.createShow('Advatar,25/11/2019,12:00pm')
+		const result = await production.prodDetails("Advatar,25/11/2019,12:00pm", ":memory:")
+		expect(result[0]).not.toBeUndefined()
 		done()
 	})
 
@@ -46,6 +47,3 @@ describe('showTime()', () => {
 	})
 
 })
-
-
-

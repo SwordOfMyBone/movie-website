@@ -53,6 +53,7 @@ module.exports = class Production
 			await db.run(sql)
 			sql = `INSERT INTO showingSchedule(movie, date, time) VALUES("${movie}", "${date}", "${time}");`
 			await db.run(sql)
+			//return true
 		}
 		catch (err) {
 			throw err
