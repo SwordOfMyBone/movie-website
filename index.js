@@ -70,7 +70,7 @@ router.get('/home', async ctx => {
 router.get('/booking', async ctx => await ctx.render('Bookingpage'))
 router.get('/payment', async ctx => await ctx.render('payment'))
 router.get('/payment_complete', async ctx => await ctx.render('payment_complete'))
-
+router.get('/cart', async ctx => await ctx.render('shoppingCart'))
 router.get('/support', async ctx => await ctx.render('support', { sessionActive: ctx.session.authorised }))
 //router.get('/production', async ctx => await ctx.render("production"))
 
@@ -230,7 +230,7 @@ router.post('/payment', async ctx => {
 	}
 })
 
-router.get('/production', async ctx => {
+router.get('/production', async ctx => { 
 	try {
 		const db = await database.open(dbName)
 		const sql = 'SELECT movie FROM movies;'
