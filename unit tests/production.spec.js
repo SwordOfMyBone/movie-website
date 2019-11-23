@@ -21,7 +21,7 @@ describe('prodDetails()', () =>
 		expect(prodDetails).toBe(true)
 		done()
 	})
-})
+}) 
 
  
 describe('createShow()', () => {
@@ -34,8 +34,8 @@ describe('createShow()', () => {
 		expect(result[0]).not.toBeUndefined()
 		done()
 	})
-
 })
+
 
 describe('showTime()', () => {
 
@@ -44,6 +44,8 @@ describe('showTime()', () => {
 		const showTime = await production.showTime('Movie')
 		expect(showTime).toBe(true)
 		done()
-	})
+	}) 
+	
 
 })
+

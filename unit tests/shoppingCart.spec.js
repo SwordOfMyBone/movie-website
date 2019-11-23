@@ -48,6 +48,33 @@ describe('decrement()',() => {
 		await expect(decrement).toBeUndefined()
 		done()
 	})
+
+})
+
+// Function to be checked .key 
+describe('check(item)',() => {
+test('error if blank item', async done => {
+		expect.assertions(1)
+		const cart = await new Cart()
+		await expect( cart.check('') )
+		.rejects.toEqual( Error('missing item') )
+		done()
+	})
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
 // bugged needs fixing 
 	// test('If more than one ticket is present decrement by one', async done => {
 	// 	expect.assertions(1) // Having issues with remove.
@@ -57,7 +84,7 @@ describe('decrement()',() => {
 	// 	await expect(decrement).toBe()
 	// 	done()
 	// })
-})
+
 // async decrement(item) {
 // 	try{
 // 		const current = this.cart.get(item)
