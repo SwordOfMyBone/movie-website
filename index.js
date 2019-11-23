@@ -10,13 +10,15 @@ const bodyParser = require('koa-bodyparser')
 const koaBody = require('koa-body')({ multipart: true, uploadDir: '.' })
 const session = require('koa-session')
 const database = require('sqlite-async')
-//const fs = require('fs-extra')
+//const fs = requires('fs-extra')
 //const mime = require('mime-types')
 //const jimp = require('jimp')
 
 /* IMPORT CUSTOM MODULES */
 const User = require('./modules/user')
-const Cart = require('./modules/shoppingCart.js')
+const Cart = require('./modules/cart')
+const cartEntry = require('./modules/cartEntry')
+const help = require('./modules/help')
 const app = new Koa()
 const router = new Router()
 const Production = require('./modules/production')
@@ -85,6 +87,7 @@ router.get('/support', async ctx => await ctx.render('support', { sessionActive:
 router.get('/logout', async ctx => {
 	ctx.session.authorised = null
 	ctx.session.username = null
+	ctx.session.cart = null
 	ctx.redirect('/home')
 })
 
@@ -166,26 +169,20 @@ router.post('/login', async ctx => {
 		await user.login(body.user, body.pass)
 		ctx.session.authorised = true
 		ctx.session.username = body.user
-		ctx.session.cart = new Cart
-		//console.log(ctx.session)
+		ctx.session.cart = new Cart()
 		return ctx.redirect('/?msg=you are now logged in...', body.user)
 	} catch (err) {
 		await ctx.render('error', { message: err.message })
 	}
 })
 
-router.get('/logout', async ctx => {
-	ctx.session.authorised = null
-	console.log('Logged OUT')
-	ctx.redirect('/?msg=you are now logged out')
-})
+
 
 router.get('/tickets/:movie/:date/:time', async ctx => {
 	try {
 		const ticket = await new Ticket(dbName)
 		//await ticket.addToDb('1', 'Avatar', '40')
 		const sql = `SELECT numberOfSeats FROM showingSchedule WHERE movie LIKE "%${ctx.params.movie}%" AND date LIKE "%${ctx.params.date}%" AND time LIKE "%${ctx.params.time}%";`
-		// console.log(ctx.params.time)
 		//console.log(ctx.params.date)
 		const db = await database.open(dbName)
 		const data = await db.get(sql)
@@ -193,7 +190,7 @@ router.get('/tickets/:movie/:date/:time', async ctx => {
 		const low_priced = await ticket.getBands(ctx.params.movie, ctx.params.date, ctx.params.time, 'low')
 		const medium_priced = await ticket.getBands(ctx.params.movie, ctx.params.date, ctx.params.time, 'medium')
 		const high_priced = await ticket.getBands(ctx.params.movie, ctx.params.date, ctx.params.time, 'high')
-		await ctx.render('ticketsAvailable', {tickets: data['numberOfSeats'], movie: ctx.params.movie, lowTickets: low_priced, mediumTickets: medium_priced, highTickets: high_priced})
+		await ctx.render('ticketsAvailable', {tickets: data['numberOfSeats'], movie: ctx.params.movie, lowTickets: low_priced, mediumTickets: medium_priced, highTickets: high_priced, params:ctx.params})
 	} catch (err) {
 		await ctx.render('error', { message: err.message })
 	}
@@ -202,8 +199,25 @@ router.get('/tickets/:movie/:date/:time', async ctx => {
 router.post('/tickets/:movie', async ctx => {
 	try {
 		const body = ctx.request.body
-		console.log(ctx.params.movie)
+		// console.log(ctx.params.movie)
 		await ctx.render('ticketsAvailable', body)
+	} catch (err) {
+		await ctx.render('error', { message: err.messages })
+	}
+})
+
+router.post('/cart/:name/:date/:time', async ctx => {
+	try {
+		let x = new Cart(ctx.session.cart)
+		const body = ctx.request.body
+		const params = ctx.params
+		console.log(body)
+		console.log(ctx.params)
+		let entry = new cartEntry(body, params)
+		x.add(entry)
+		ctx.session.cart = x
+		console.log(ctx.session.cart)
+		await ctx.redirect("/home")
 	} catch (err) {
 		await ctx.render('error', { message: err.messages })
 	}

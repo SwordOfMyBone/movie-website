@@ -17,12 +17,12 @@ module.exports = class Ticket {
 
 
 	// writes to the db.
-	async addToDb(userID, movieName, price) {
+	async addToDb(userID, movieName, priceBand) {
 		try {
 			if(userID.length === 0) throw new Error('missing user id')
 			if(movieName.length === 0) throw new Error('missing movieName')
 			if(price.length === 0) throw new Error('missing price')
-			const sql = `INSERT INTO tickets(userid, movieName, price) VALUES("${userID}", "${movieName}", "${price}");`
+			const sql = `INSERT INTO tickets(userid, movieName, priceBand) VALUES("${userID}", "${movieName}", "${priceBand}");`
 			await this.db.run(sql)
 			return true
 		} catch(err) {
