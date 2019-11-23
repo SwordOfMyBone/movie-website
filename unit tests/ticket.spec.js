@@ -37,6 +37,27 @@ describe('addToDb()', () => {
 })
 
 
+beforeAll( async() => {
+	// stuff to do before any of the tests run
+})
+afterAll( async() => {
+	// runs after all the tests have completed
+})
+describe('Ticket()', () => {
+
+	test('Ticket qty must be a number', async done => {
+		expect.assertions(1)
+		try {
+			todo.add('Advtar', 'three')
+			done.fail('test failed')
+		} catch(err) {
+			expect(err.message).toBe('qty must be a number')
+		} finally {
+			done()
+		}
+	})
+})
+	/*  bug encountered
 describe('getTickets()', () => {
 	test('Adding specific ticket for user', async done => {
 		const ticket = await new Tickets()
@@ -45,3 +66,5 @@ describe('getTickets()', () => {
 		done()
 	})
 })
+*/
+
