@@ -26,6 +26,7 @@ module.exports = class Production
 			const sql = `SELECT * FROM showingSchedule WHERE movie="${movie}";`
 			const db = await sqlite.open(dbName)
 			const data = await db.all(sql)
+			//db.all = allows you to execute an SQL query with specified parameters
 			console.log(data)
 			await db.close()
 			return data
