@@ -56,6 +56,7 @@ const dbName = 'website.db'
  */
 router.get('/home', async ctx => {
 	try {
+		const movieTicks = await new Ticket(dbName)
 		const production = await new Production(dbName)
 		const db = await database.open(dbName)
 		const sql = 'SELECT movie FROM movies'
@@ -182,15 +183,21 @@ router.get('/tickets/:movie/:date/:time', async ctx => {
 	try {
 		const ticket = await new Ticket(dbName)
 		//await ticket.addToDb('1', 'Avatar', '40')
-		const sql = `SELECT numberOfSeats FROM showingSchedule WHERE movie LIKE "%${ctx.params.movie}%" AND date LIKE "%${ctx.params.date}%" AND time LIKE "%${ctx.params.time}%";`
-		//console.log(ctx.params.date)
+		//let sql = `SELECT ShowNumber FROM showingSchedule WHERE movie LIKE "%${ctx.params.movie}%" AND date LIKE "%${ctx.params.date}%" AND time LIKE "%${ctx.params.time}%";`
 		const db = await database.open(dbName)
-		const data = await db.get(sql)
+		const data = await ticket.showNumber(ctx.params.movie, ctx.params.date, ctx.params.time)
+		console.log(data)
+		let sql = `SELECT low, medium, high FROM movieTicket WHERE showNumber = "${data}";`
+		const data1 = await db.get(sql)
+		console.log(data1)
+		let totalTickets = data1.low + data1.medium + data1.high
+		//console.log(ctx.params.date)
 		await db.close()
-		const low_priced = await ticket.getBands(ctx.params.movie, ctx.params.date, ctx.params.time, 'low')
+		/*const low_priced = await ticket.getBands(ctx.params.movie, ctx.params.date, ctx.params.time, 'low')
 		const medium_priced = await ticket.getBands(ctx.params.movie, ctx.params.date, ctx.params.time, 'medium')
-		const high_priced = await ticket.getBands(ctx.params.movie, ctx.params.date, ctx.params.time, 'high')
-		await ctx.render('ticketsAvailable', {tickets: data['numberOfSeats'], movie: ctx.params.movie, lowTickets: low_priced, mediumTickets: medium_priced, highTickets: high_priced, params:ctx.params})
+		const high_priced = await ticket.getBands(ctx.params.movie, ctx.params.date, ctx.params.time, 'high') */
+		await ctx.render('ticketsAvailable', { tickets: totalTickets, movie: ctx.params.movie, lowTickets: data1.low, mediumTickets: data1.medium, highTickets: data1.high, params: ctx.params, showNumber: data })
+
 	} catch (err) {
 		await ctx.render('error', { message: err.message })
 	}
@@ -230,20 +237,31 @@ router.get('/quickpayment', async ctx => {
 			let userid = await user.getId(ctx.session.username)
 			let cardDetails = await user.getCard(userid)
 			console.log('these are the payment details', cardDetails)
-			await ctx.render('quickpayment', cardDetails)}
-	} catch(err) {
-		await ctx.render('error', {message: err.message})
+			await ctx.render('quickpayment', cardDetails)
+		}
+	} catch (err) {
+		await ctx.render('error', { message: err.message })
 
 	}
 })
 
-router.post('/payment', async ctx => {
+router.post('/payment/:showNumber', async ctx => {
 	try {
+		const tickets = await new Ticket(dbName)
 		console.log(ctx.request.body)
 		console.log(ctx.params)
 		const body = ctx.request.body
-		const numberOfTickets = body.tickets.reduce((acc, val) => acc + Number(val), 0)//the reduce function sums the number of tickets
-		await ctx.render('payment', {numberOfTickets: numberOfTickets})
+		console.log(body)
+		console.log(body.tickets[0])
+		let ticketsAvailable = await tickets.ticketsAvailable(ctx.params.showNumber, body.tickets[0], body.tickets[1], body.tickets[2])
+		console.log(ticketsAvailable)
+		if (ticketsAvailable) {
+			const numberOfTickets = body.tickets.reduce((acc, val) => acc + Number(val), 0)//the reduce function sums the number of tickets
+			await ctx.render('payment', { numberOfTickets: numberOfTickets })
+		}
+		else {
+			await ctx.render('error', { message: "too many tickets selected" })
+		}
 	} catch (err) {
 		err.message
 	}

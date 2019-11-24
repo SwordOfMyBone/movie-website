@@ -2,3 +2,5 @@ INSERT INTO movies(movie, Details) VALUES("Avatar", "A paraplegic Marine dispatc
 
 INSERT INTO showingSchedule(date, time, movie, numberOfSeats) VALUES("01-12-2019", "17:00", "Avatar", 20), ("01-12-2019", "20:00", "Avatar", 20), ("01-12-2019", "17:00", "Avengers IW", 20), ("01-12-2019", "20:00", "Avengers IW", 20), ("01-12-2019", "17:00", "Avengers EG", 20), ("01-12-2019", "20:00", "Avengers EG", 20), ("01-12-2019", "17:00", "Scary Movie", 20), ("01-12-2019", "20:00", "Scary Movie", 20);
 
+INSERT INTO movieTicket(showNumber, low, medium, high) VALUES(1, 10, 10, 10), (2, 10, 10, 10), (3, 10, 10, 10), (4, 10, 10, 10), (5, 10, 10, 10), (6, 10, 10, 10), (7, 10, 10, 10), (8, 10, 10, 10);
+
