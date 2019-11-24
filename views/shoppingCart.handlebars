@@ -6,10 +6,14 @@
 </head>
 
 	<body>
-		<form  class="form" action="/lettuce"  method="post">
-		<input id="Addbtn" type="button" value="addbtn" onclick="add();" />
-		<input id="Removebtn" type="button" value="removebtn" onclick="remove();" />
-		<p>Aigt</p>
+		<form  class="form" action="/shoppingCart"  method="post">
+		<p>Current items in shopping cart</p>
+		{{#each item}}
+		<p>{{item}}</p>
+		<button onclick="add(item)">Add to shopping cart</button>
+		<button onclick="decrement(item)">Decrement by one ticket</button>
+		<button onclick="remove(item)">Remove ticket</button>
+		{{/each}}
         </form>
 	</body>
 </html>
