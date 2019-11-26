@@ -94,15 +94,15 @@ module.exports = class User {
 		}
 	}
 
-	async getId(username){
-		try{
+	async getId(username) {
+		try {
 			let sql = `SELECT id FROM users WHERE user = "${username}";`
 			let id = {}
 			await this.db.each(sql, (err, rows) => {
-				if (err){
+				if (err) {
 					throw err
 				}
-				if (!err){
+				if (!err) {
 					id = rows.id
 				}
 			})
@@ -114,21 +114,32 @@ module.exports = class User {
 
 	}
 
-	async getCard(id){
-		try{
+	async getCard(id) {
+		try {
 			let sql = `SELECT "Card number", "Expiry Date", "Security Code" FROM card_details WHERE id = "${id}";`
 			let cardDetails = {}
 			await this.db.each(sql, (err, rows) => {
-				if (err){
+				if (err) {
 					throw err
 				}
-				if (!err){
+				if (!err) {
 					cardDetails = rows
 				}
 			})
 			return cardDetails
 		}
-		catch (err){
+		catch (err) {
+			throw err
+		}
+	}
+
+	async movieIncome() {
+		try {
+			const sql = `SELECT movie, time, totalIncome FROM management;`
+			const data = await this.db.all(sql)
+			return data
+		}
+		catch (err) {
 			throw err
 		}
 	}
