@@ -7,9 +7,9 @@
 
 <body>
     <p>There are {{tickets}} tickets left in total for {{movie}} on the date chosen.</p>
+    <p>Time chosen: {{params.time}}</p>
     <p>Please choose how many you'd like, up to the maximum possible.</p>
     <p>There are {{lowTickets}} low-priced tickets available</p>
-    {{params.time}}
     <form action="/payment/{{showNumber}}" method="post">
         <input name="tickets">
         <p>There are {{mediumTickets}} medium-priced tickets available</p>
