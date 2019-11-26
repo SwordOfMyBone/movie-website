@@ -72,8 +72,14 @@ router.get('/home', async ctx => {
 })
 
 router.get('/booking', async ctx => await ctx.render('Bookingpage'))
-router.get('/payment', async ctx => await ctx.render('payment'))
-router.get('/payment_complete', async ctx => await ctx.render('payment_complete'))
+router.post('/payment_complete', async ctx => {
+	const tickets = await new Ticket(dbName)
+	const body = ctx.request.body
+	await tickets.ticketsSold(body.movie, body.time, body.total)
+	await tickets.removalTickets(body.movie, body.time, body.low, body.medium, body.high)
+
+	await ctx.render('payment_complete')
+})
 router.get('/cart', async ctx => await ctx.render('shoppingCart'))
 router.get('/support', async ctx => await ctx.render('support', { sessionActive: ctx.session.authorised }))
 //router.get('/production', async ctx => await ctx.render("production"))
@@ -193,10 +199,11 @@ router.get('/tickets/:movie/:date/:time', async ctx => {
 		let totalTickets = data1.low + data1.medium + data1.high
 		//console.log(ctx.params.date)
 		await db.close()
+		let tick = await ticket.pricePerTicket(data)
 		/*const low_priced = await ticket.getBands(ctx.params.movie, ctx.params.date, ctx.params.time, 'low')
 		const medium_priced = await ticket.getBands(ctx.params.movie, ctx.params.date, ctx.params.time, 'medium')
 		const high_priced = await ticket.getBands(ctx.params.movie, ctx.params.date, ctx.params.time, 'high') */
-		await ctx.render('ticketsAvailable', { tickets: totalTickets, movie: ctx.params.movie, lowTickets: data1.low, mediumTickets: data1.medium, highTickets: data1.high, params: ctx.params, showNumber: data })
+		await ctx.render('ticketsAvailable', { tickets: totalTickets, movie: ctx.params.movie, lowTickets: data1.low, mediumTickets: data1.medium, highTickets: data1.high, params: ctx.params, showNumber: data, LP: tick.LP, MP: tick.MP, HP: tick.HP })
 
 	} catch (err) {
 		await ctx.render('error', { message: err.message })
@@ -248,16 +255,20 @@ router.get('/quickpayment', async ctx => {
 router.post('/payment/:showNumber', async ctx => {
 	try {
 		const tickets = await new Ticket(dbName)
+		const production = await new Production(dbName)
 		console.log(ctx.request.body)
 		console.log(ctx.params)
 		const body = ctx.request.body
 		console.log(body)
 		console.log(body.tickets[0])
+		const movietime = await production.movieName(ctx.params.showNumber)
+		const totalCost = await tickets.totalCost(ctx.params.showNumber, body.tickets[0], body.tickets[1], body.tickets[2])
+
 		let ticketsAvailable = await tickets.ticketsAvailable(ctx.params.showNumber, body.tickets[0], body.tickets[1], body.tickets[2])
 		console.log(ticketsAvailable)
 		if (ticketsAvailable) {
-			const numberOfTickets = body.tickets.reduce((acc, val) => acc + Number(val), 0)//the reduce function sums the number of tickets
-			await ctx.render('payment', { numberOfTickets: numberOfTickets })
+			//const numberOfTickets = body.tickets.reduce((acc, val) => acc + Number(val), 0)//the reduce function sums the number of tickets
+			await ctx.render('payment', { low: body.tickets[0], medium: body.tickets[1], high: body.tickets[2], movie: movietime.movie, time: movietime.time, total: totalCost })
 		}
 		else {
 			await ctx.render('error', { message: "too many tickets selected" })
@@ -267,7 +278,7 @@ router.post('/payment/:showNumber', async ctx => {
 	}
 })
 
-router.get('/production', async ctx => { 
+router.get('/production', async ctx => {
 	try {
 		const db = await database.open(dbName)
 		const sql = 'SELECT movie FROM movies;'
@@ -313,12 +324,14 @@ router.get('/production', async ctx => {
  */
 router.get('/myprofile', async ctx => {// show logged in users info
 	const picture = `./avatars/${ctx.session.username}.png`
-	const user = await new User()
+	const user = await new User(dbName)
 	const data = await user.isAdmin(ctx.session.username, dbName)
+	const data1 = await user.movieIncome()
 	console.log(data)
+	console.log(data1)
 	await ctx.render('myprofile', {
 		sessionActive: ctx.session.authorised,
-		name: ctx.session.username, imgUrl: picture, admin: data
+		name: ctx.session.username, imgUrl: picture, admin: data, income: data1
 	})
 })
 
@@ -347,10 +360,10 @@ router.get('/Prod/:movie', async ctx => {
  * @name Myprofile script
  * @route {POST} /myprofile
  */
-router.post('/myprofile', async ctx => {
+router.post('/myprofile', koaBody, async ctx => {
 	const body = ctx.request.body
-	const show = await new Production()
-	await show.createShow(body.movie, body.date, body.time, dbName)
+	const show = await new Production(dbName)
+	await show.createShow(body.movie, body.date, body.time, body.low, body.medium, body.high, body.LP, body.MP, body.HP)
 	await show.moviePic(ctx.request.files.avatar, body.movie)
 	ctx.redirect('myprofile')
 })
