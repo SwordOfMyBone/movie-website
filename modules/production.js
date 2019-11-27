@@ -37,7 +37,7 @@ module.exports = class Production {
 	async showTime(movie) {
 		try {
 			sql = `SELECT * FROM showingSchedule WHERE movie = "${movie}";`
-			db.all(sql, (err, rows) => {
+			this.db.all(sql, (err, rows) => {
 				if (err) console.error(err.message)
 				if (!err) console.log(rows)
 			})
