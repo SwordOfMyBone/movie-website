@@ -12,7 +12,7 @@ const transporter = nodemailer.createTransport({
 
 let mailOptions = {
 	from: 'xtheaters.do.not.reply@gmail.com',
-	to: 'a1998ed@gmail.com',
+	to: 'a1998ed@gmail.com', //Should be user email
 	subject: ' Testing if app works',
 	text: 'Hello this is Xtheaters'
 }

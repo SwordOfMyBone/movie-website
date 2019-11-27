@@ -59,7 +59,12 @@
 			<p>Movie Name<input type="text" name="movie"></p>
 			<p>Date Available <input type="text" name="date"></p>
 			<p>Time Available<input type="text" name="time"></p>
-
+			<p>Set Cost of low-priced seats<input type="number" name="LP"></p>
+			<p>Set Cost of medium-priced seats<input type="number" name="MP"></p>
+			<p>Set Cost of high-priced seats<input type="number" name="HP"></p>
+			<p>Low-Priced Seats Available<input type="number" name="low"></p>
+			<p>Medium-Priced Seats Available<input type="number" name="medium"></p>
+			<p>High-Priced Seats Available<input type="number" name="high"></p>
 			<p><input type="file" name="avatar"></p>
 			<p><input type="submit" value="ADD"></p>
 		</form>
@@ -67,9 +72,25 @@
 			<td>THIS IS AN ADMIN ACCOUNT</td>
 		</tr>
 		{{/if}}
+
 		<a href="/logout">Log Out</a>
 	</table>
+	{{#if admin}}
+	<table>
+		<tr>
+			<th>Name</th>
+			<th>Time</th>
+			<th>Total Income</th>
+		</tr>
+		{{#each income}}
 
+		<tr>
+			<td>{{this.movie}}</td>
+			<td>{{this.time}}</td>
+			<td>£{{this.totalIncome}}</td>
+		</tr>
+		{{/each}}
+		{{/if}}
 
 </body>
 <p class="footer">We are Xtheatre! © All copyrights are reserved.</p>

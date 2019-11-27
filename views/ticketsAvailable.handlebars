@@ -6,18 +6,18 @@
 </head>
 
 <body>
-    <p>There are {{tickets}} tickets left in total for {{movie}} on the date chosen.</p>
-    <p>Please choose how many you'd like, up to the maximum possible.</p>
-    <p>There are {{lowTickets}} low-priced tickets available</p>
-    {{params.time}}
+    <p>For {{movie}} on the date chosen.</p>
+    <p>Please choose how many tickets you'd like, up to the maximum possible.</p>
+    <p>There are {{lowTickets}} low-priced tickets available at £{{LP}} per ticket</p>
     <form action="/payment/{{showNumber}}" method="post">
         <input name="tickets">
-        <p>There are {{mediumTickets}} medium-priced tickets available</p>
+        <p>There are {{mediumTickets}} medium-priced tickets available £{{MP}} per ticket</p>
         <input name="tickets">
-        <p>There are {{highTickets}} high-priced tickets available</p>
+        <p>There are {{highTickets}} high-priced tickets available £{{HP}} per ticket</p>
         <input name="tickets">
         <input type="submit">
-        <button class="contbutton1" type="submit" formaction="/cart/{{params.movie}}/{{params.date}}/{{params.time}}"> Add to cart </button>
+        <button class="contbutton1" type="submit" formaction="/cart/{{params.movie}}/{{params.date}}/{{params.time}}">
+            Add to cart </button>
     </form>
     <br>
     <a href="/home"><button class="contbutton1">Back to the homepage</button></a>

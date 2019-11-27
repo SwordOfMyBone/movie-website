@@ -1,30 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <link href="style.css" type="text/css" rel="stylesheet" />
 </head>
+
 <body>
- <h1>Checkout</h1>
+    <h1>Checkout</h1>
     <form>
         <input type="radio" name="payment method" value="VISA" checked>VISA<br>
         <input type="radio" name="payment method" value="MasterCard">MasterCard
     </form>
     <h3>Payment details</h3>
     <br><br>
-    <form><br>
-        Number of tickets: {{numberOfTickets}}
+    <form action="/payment_complete" method="post"><br>
+        <p>Please confirm you have chosen these tickets for movie: {{movie}} at time: {{time}} </p>
+        <p>Number of low tickets: {{low}}</p>
+        <p>Number of medium tickets: {{medium}}</p>
+        <p>Number of high tickets: {{high}} </p>
+        <p>Total Cost: £{{total}}</p>
         <br>
         Card Number:<br>
-        <input type="text" name="Card Number"><br><br>
+        <input name="Card Number"><br><br>
         Expiry date:<br>
-        <input type="text" name="Expiry date month" size="1">/
-        <input type="text" name="Expiry date year" size="1"><br><br>
+        <input name="Expiry date month" size="1">/
+        <input name="Expiry date year" size="1"><br><br>
         CVV code:<br>
-        <input type="text" name="CVV code" size="1"><br><br>
-        <a href="/payment_complete"><button type="submit">Submit</button></a>
-        <a href="/home"><button type="button">Back home</button></a><br>
-        <a href="/quickpayment"><button type="button">Buy with one click</button></a>
+        <input name="CVV code" size="1"><br><br>
+        <input type="hidden" name="movie" value="{{movie}}">
+        <input type="hidden" name="time" value="{{time}}">
+        <input type="hidden" name="low" value={{low}}>
+        <input type="hidden" name="medium" value={{medium}}>
+        <input type="hidden" name="high" value={{high}}>
+        <input type="hidden" name="total" value={{total}}>
+        <input type="submit">
+
     </form>
+    <a href="/home"><button type="button">Back home</button></a><br>
+    <a href="/quickpayment"><button type="button">Buy with one click</button></a>
 
 </body>
+
+</html>
