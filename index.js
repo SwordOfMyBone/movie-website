@@ -61,7 +61,6 @@ router.get('/home', async ctx => {
 		const db = await database.open(dbName)
 		const sql = 'SELECT movie FROM movies'
 		const data = await db.all(sql)
-		console.log(data)
 		await ctx.render('homePage', {
 			sessionActive: ctx.session.authorised,
 			movies: data
@@ -74,7 +73,7 @@ router.get('/home', async ctx => {
 router.get('/booking', async ctx => await ctx.render('Bookingpage'))
 router.get('/payment', async ctx => await ctx.render('payment'))
 router.get('/payment_complete', async ctx => await ctx.render('payment_complete'))
-router.get('/cart', async ctx => await ctx.render('shoppingCart'))
+router.get('/myCart', async ctx => await ctx.render('shoppingCart'))
 router.get('/support', async ctx => await ctx.render('support', { sessionActive: ctx.session.authorised }))
 //router.get('/production', async ctx => await ctx.render("production"))
 
@@ -219,12 +218,12 @@ router.post('/cart/:name/:date/:time', async ctx => {
 		const body = ctx.request.body
 		const params = ctx.params
 		console.log(body)
-		console.log(ctx.params)
-		let entry = new cartEntry(body, params)
+		console.log(params)
+		let entry = new cartEntry(params, body)
 		x.add(entry)
-		ctx.session.cart = x
-		console.log(ctx.session.cart)
-		await ctx.redirect("/home")
+		let item = ctx.session.cart
+		console.log(item.itemlist) 
+		await ctx.render('shoppingCart', {item:item.itemlist})
 	} catch (err) {
 		await ctx.render('error', { message: err.messages })
 	}

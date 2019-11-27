@@ -1,19 +1,16 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-	<meta charset="utf-8">
+    <meta charset="utf-8">
 </head>
 
-	<body>
-		<form  class="form" action="/shoppingCart"  method="post">
-		<p>Current items in shopping cart</p>
-		{{#each item}}
-		<p>{{item}}</p>
-		<button onclick="add(item)">Add to shopping cart</button>
-		<button onclick="decrement(item)">Decrement by one ticket</button>
-		<button onclick="remove(item)">Remove ticket</button>
-		{{/each}}
-        </form>
-	</body>
-</html>
+<body>
+    <p>Current items in shopping cart:</p>
+        {{#each item}}
+        Item: {{this.ticket.name}} {{this.ticket.date}} {{this.ticket.time}}  <br> 
+        <button onclick="add(item)">Add to shopping cart</button>
+        <button onclick="decrement(item)">Decrement by one ticket</button>
+        <button onclick="remove(item)">Remove ticket</button> <br> 
+        {{/each}}
+</body>

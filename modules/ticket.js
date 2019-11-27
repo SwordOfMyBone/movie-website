@@ -19,7 +19,7 @@ module.exports = class Ticket {
 
 
 	// writes to the db.
-	async addToDb(userID, movieName, priceBand) {
+	async addToDb(userID, movieName, price) {
 		try {
 			if (userID.length === 0) throw new Error('missing user id')
 			if (movieName.length === 0) throw new Error('missing movieName')

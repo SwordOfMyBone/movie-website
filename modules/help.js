@@ -4,15 +4,17 @@ module.exports = {}
 
 	//handles incrementing two obj and returns a new object
 module.exports.entryAdd = (entry,entry2) => {
-		let qty = {}
-		for(let i of Object.entries(entry.ticketQty)){
-			for(let j of Object.entries(entry2.ticketQty)){
+		let qty = {tickets : []}
+		ticketPrices = Object.values(entry.ticketQty)[0]
+		ticketPrices2 = Object.values(entry2.ticketQty)[0]		
+		for(let i in ticketPrices){
+			for(let j in ticketPrices2){
 				//builds every tPriceBand : value pair 
-				if(JSON.stringify(i[0]) === JSON.stringify(j[0])){
-					let value = parseInt(i[1])+parseInt(j[1])
-					let tType = i[0]
-					qty[tType] =  value
+				if(i == j){
+					let value = parseInt(ticketPrices[i]) + parseInt(ticketPrices2[j])
+					qty.tickets.push(value)
 				}
+
 			}
 		}
 		let ticket = entry.ticket
