@@ -1,6 +1,8 @@
-
 'use strict'
 const sqlite = require('sqlite-async')
+const nodemailer = require('nodemailer')
+const fs = require('fs')
+const pdf = require('pdfkit')
 
 
 module.exports = class Ticket {
@@ -24,7 +26,7 @@ module.exports = class Ticket {
 
 
 	// writes to the db.
-	async addToDb(userID, movieName, priceBand) {
+	async addToDb(userID, movieName, price) {
 		try {
 			if (userID.length === 0) throw new Error('missing user id')
 			if (movieName.length === 0) throw new Error('missing movieName')
@@ -140,4 +142,50 @@ module.exports = class Ticket {
 			throw err
 		}
 	}
+
+	async emailing(name, email) {
+		const transporter = nodemailer.createTransport({
+			service: 'gmail',
+			auth: {
+				user: "noreply.xtheatres@gmail.com",
+				pass: "softwareengineering"
+			}
+		})
+
+		let mailOptions = {
+			from: 'noreply.xtheatres@gmail.com',
+			to: `${email}`, //Should be user email
+			subject: 'Your movietickets',
+			text: `Hello this is Xtheaters, see attached document`,
+			attachments: [
+				{ filename: `${name}.pdf`, path: `./pdf/${name}.pdf` }
+			]
+		}
+
+		transporter.sendMail(mailOptions, (err, data) => {
+			if (err) {
+				console.log('Error Occurs', err)
+			} else {
+				console.log('Email sent!!!')
+			}
+		})
+	}
+
+	async createPdf(name, movie, time, total, low = 0, medium = 0, high = 0) {
+		try {
+			const pdfDoc = new pdf
+			pdfDoc.pipe(fs.createWriteStream(`./pdf/${name}.pdf`))
+
+			pdfDoc.font('Times-Roman')
+				.fontSize(22)
+				.text(`Hello this is Xtheaters, this is to confirm you have booked ${movie} at ${time} with ${low} low tickets, ${medium} medium tickets and ${high} high tickets for a total cost of £${total}`)
+
+			pdfDoc.end()
+		}
+		catch (err) {
+			throw err
+		}
+	}
+
+
 }

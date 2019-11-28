@@ -25,6 +25,7 @@
     "bcrypt": "^3.0.6",
     "bcrypt-promise": "^2.0.0",
     "expect": "^24.9.0",
+    "fs": "0.0.1-security",
     "fs-extra": "^8.1.0",
     "koa": "^2.6.2",
     "koa-body": "^4.0.8",
@@ -35,7 +36,11 @@
     "koa-static": "^5.0.0",
     "koa-views": "^6.1.5",
     "mime-types": "^2.1.22",
-    "sqlite-async": "^1.0.12"
+    "nodemailer": "^6.3.1",
+    "pdf": "^0.1.0",
+    "pdfkit": "^0.10.0",
+    "sqlite-async": "^1.0.12",
+    "sys": "0.0.1"
   },
   "devDependencies": {
     "coverage": "^0.4.1",

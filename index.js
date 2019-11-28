@@ -23,6 +23,7 @@ const app = new Koa()
 const router = new Router()
 const Production = require('./modules/production')
 const Ticket = require('./modules/ticket')
+//const mailing = require('./EmailSender')
 
 /* CONFIGURING THE MIDDLEWARE */
 app.keys = ['darkSecret']
@@ -61,7 +62,6 @@ router.get('/home', async ctx => {
 		const db = await database.open(dbName)
 		const sql = 'SELECT movie FROM movies'
 		const data = await db.all(sql)
-		console.log(data)
 		await ctx.render('homePage', {
 			sessionActive: ctx.session.authorised,
 			movies: data
@@ -72,11 +72,17 @@ router.get('/home', async ctx => {
 })
 
 router.get('/booking', async ctx => await ctx.render('Bookingpage'))
+router.get('/myCart', async ctx => await ctx.render('shoppingCart'))
 router.post('/payment_complete', async ctx => {
 	const tickets = await new Ticket(dbName)
 	const body = ctx.request.body
 	await tickets.ticketsSold(body.movie, body.time, body.total)
+
 	await tickets.removalTickets(body.movie, body.time, body.low, body.medium, body.high)
+	await tickets.createPdf(ctx.session.username, body.movie, body.time, body.total, body.low, body.medium, body.high)
+	await tickets.emailing(ctx.session.username, ctx.session.email)
+
+
 
 	await ctx.render('payment_complete')
 })
@@ -95,6 +101,7 @@ router.get('/logout', async ctx => {
 	ctx.session.authorised = null
 	ctx.session.username = null
 	ctx.session.cart = null
+	ctx.session.email = null
 	ctx.redirect('/home')
 })
 
@@ -148,9 +155,9 @@ router.post('/register', koaBody, async ctx => {
 			body.expiry.length !== 0 &&
 			body['security code'].length !== 0
 		) {
-			await user.register(body.user, body.pass, body['card number'], body.expiry, body['security code'])
+			await user.register(body.user, body.pass, body.email, body['card number'], body.expiry, body['security code'])
 		} else {
-			await user.register(body.user, body.pass)
+			await user.register(body.user, body.pass, body.email)
 		}
 		console.log(ctx.request.files.avatar)
 		await user.uploadPicture(ctx.request.files.avatar, body.user)
@@ -176,6 +183,8 @@ router.post('/login', async ctx => {
 		await user.login(body.user, body.pass)
 		ctx.session.authorised = true
 		ctx.session.username = body.user
+		const data = await user.getEmail(body.user)
+		ctx.session.email = data.email
 		ctx.session.cart = new Cart()
 		return ctx.redirect('/?msg=you are now logged in...', body.user)
 	} catch (err) {
@@ -226,12 +235,12 @@ router.post('/cart/:name/:date/:time', async ctx => {
 		const body = ctx.request.body
 		const params = ctx.params
 		console.log(body)
-		console.log(ctx.params)
-		let entry = new cartEntry(body, params)
+		console.log(params)
+		let entry = new cartEntry(params, body)
 		x.add(entry)
-		ctx.session.cart = x
-		console.log(ctx.session.cart)
-		await ctx.redirect("/home")
+		let item = ctx.session.cart
+		console.log(item.itemlist)
+		await ctx.render('shoppingCart', { item: item.itemlist })
 	} catch (err) {
 		await ctx.render('error', { message: err.messages })
 	}
@@ -331,7 +340,7 @@ router.get('/myprofile', async ctx => {// show logged in users info
 	console.log(data1)
 	await ctx.render('myprofile', {
 		sessionActive: ctx.session.authorised,
-		name: ctx.session.username, imgUrl: picture, admin: data, income: data1
+		name: ctx.session.username, imgUrl: picture, admin: data, income: data1, email: ctx.session.email
 	})
 })
 
