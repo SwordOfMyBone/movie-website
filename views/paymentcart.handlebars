@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <link href="style.css" type="text/css" rel="stylesheet" />
+</head>
+
+<body>
+    <h1>Checkout</h1>
+    <form>
+        <input type="radio" name="payment method" value="VISA" checked>VISA<br>
+        <input type="radio" name="payment method" value="MasterCard">MasterCard
+    </form>
+    <h3>Payment details</h3>
+    <br><br>
+    <form action="/payment_complete" method="post"><br>
+        <p>Please confirm you have chosen these tickets</p>
+        <table>
+
+            <tr>
+                <td>Movie</td>
+                <td>Date</td>
+                <td>Time</td>
+                <td>Low Tickets</td>
+                <td>Medium Tickets</td>
+                <td>High Tickets</td>
+
+            </tr>
+
+            {{#each cart}}
+
+            <tr>
+                {{#each this}}
+                <td>{{this}}</td>
+                {{/each}}
+            </tr>
+
+
+            {{/each}}
+        </table>
+
+        <p>for a total of £{{total}}</p>
+        Card Number:<br>
+        <input name="Card Number"><br><br>
+        Expiry date:<br>
+        <input name="Expiry date month" size="1">/
+        <input name="Expiry date year" size="1"><br><br>
+        CVV code:<br>
+        <input name="CVV code" size="1"><br><br>
+        <input type="submit">
+
+    </form>
+    <a href="/home"><button type="button">Back home</button></a><br>
+    <a href="/quickpayment"><button type="button">Buy with one click</button></a>
+
+</body>
+
+</html>

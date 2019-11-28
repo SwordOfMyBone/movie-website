@@ -72,16 +72,36 @@ router.get('/home', async ctx => {
 })
 
 router.get('/booking', async ctx => await ctx.render('Bookingpage'))
-router.get('/myCart', async ctx => await ctx.render('shoppingCart'))
+router.get('/myCart', async ctx => await ctx.render('shoppingCart', { cart: ctx.session.cart }))
+router.get('/paymentcart', async ctx => {
+	try {
+		const tickets = await new Ticket(dbName)
+		let total = await tickets.cartTotal(ctx.session.cart)
+		await ctx.render('paymentcart', { cart: ctx.session.cart, total: total })
+	}
+	catch (err) {
+		throw err
+	}
+})
 router.post('/payment_complete', async ctx => {
 	const tickets = await new Ticket(dbName)
 	const body = ctx.request.body
-	await tickets.ticketsSold(body.movie, body.time, body.total)
+	if (ctx.session.cart === undefined || ctx.session.cart.length == 0) {
+		await tickets.ticketsSold(body.movie, body.time, body.total)
+		await tickets.removalTickets(body.movie, body.time, body.low, body.medium, body.high)
+		await tickets.createPdf(ctx.session.username, body.movie, body.time, body.total, body.low, body.medium, body.high)
+		await tickets.emailing(ctx.session.username, ctx.session.email)
 
-	await tickets.removalTickets(body.movie, body.time, body.low, body.medium, body.high)
-	await tickets.createPdf(ctx.session.username, body.movie, body.time, body.total, body.low, body.medium, body.high)
-	await tickets.emailing(ctx.session.username, ctx.session.email)
+	}
+	else {
+		let total = await tickets.cartTotal(ctx.session.cart)
+		await tickets.cartTicketsSold(ctx.session.cart)
+		await tickets.cartRemovalTickets(ctx.session.cart)
+		await tickets.createPdfCart(ctx.session.username, total, ctx.session.cart)
+		await tickets.emailing(ctx.session.username, ctx.session.email)
+	}
 
+	ctx.session.cart = []
 
 
 	await ctx.render('payment_complete')
@@ -100,11 +120,20 @@ router.get('/support', async ctx => await ctx.render('support', { sessionActive:
 router.get('/logout', async ctx => {
 	ctx.session.authorised = null
 	ctx.session.username = null
-	ctx.session.cart = null
+	ctx.session.cart = []
 	ctx.session.email = null
 	ctx.redirect('/home')
 })
 
+router.get('/clearall', async ctx => {
+	try {
+		ctx.session.cart = []
+		await ctx.redirect('/')
+	}
+	catch (err) {
+
+	}
+})
 
 /**
  * The secure home page.
@@ -185,7 +214,8 @@ router.post('/login', async ctx => {
 		ctx.session.username = body.user
 		const data = await user.getEmail(body.user)
 		ctx.session.email = data.email
-		ctx.session.cart = new Cart()
+		ctx.session.cart = []
+
 		return ctx.redirect('/?msg=you are now logged in...', body.user)
 	} catch (err) {
 		await ctx.render('error', { message: err.message })
@@ -197,8 +227,6 @@ router.post('/login', async ctx => {
 router.get('/tickets/:movie/:date/:time', async ctx => {
 	try {
 		const ticket = await new Ticket(dbName)
-		//await ticket.addToDb('1', 'Avatar', '40')
-		//let sql = `SELECT ShowNumber FROM showingSchedule WHERE movie LIKE "%${ctx.params.movie}%" AND date LIKE "%${ctx.params.date}%" AND time LIKE "%${ctx.params.time}%";`
 		const db = await database.open(dbName)
 		const data = await ticket.showNumber(ctx.params.movie, ctx.params.date, ctx.params.time)
 		console.log(data)
@@ -206,12 +234,8 @@ router.get('/tickets/:movie/:date/:time', async ctx => {
 		const data1 = await db.get(sql)
 		console.log(data1)
 		let totalTickets = data1.low + data1.medium + data1.high
-		//console.log(ctx.params.date)
 		await db.close()
 		let tick = await ticket.pricePerTicket(data)
-		/*const low_priced = await ticket.getBands(ctx.params.movie, ctx.params.date, ctx.params.time, 'low')
-		const medium_priced = await ticket.getBands(ctx.params.movie, ctx.params.date, ctx.params.time, 'medium')
-		const high_priced = await ticket.getBands(ctx.params.movie, ctx.params.date, ctx.params.time, 'high') */
 		await ctx.render('ticketsAvailable', { tickets: totalTickets, movie: ctx.params.movie, lowTickets: data1.low, mediumTickets: data1.medium, highTickets: data1.high, params: ctx.params, showNumber: data, LP: tick.LP, MP: tick.MP, HP: tick.HP })
 
 	} catch (err) {
@@ -235,12 +259,19 @@ router.post('/cart/:name/:date/:time', async ctx => {
 		const body = ctx.request.body
 		const params = ctx.params
 		console.log(body)
-		console.log(params)
-		let entry = new cartEntry(params, body)
-		x.add(entry)
-		let item = ctx.session.cart
-		console.log(item.itemlist)
-		await ctx.render('shoppingCart', { item: item.itemlist })
+		console.log(body.tickets[0])
+		console.log(body.tickets[0])
+		console.log(body.tickets[0])
+		console.log(params.date)
+		console.log(ctx.session.cart)
+		await x.addCart(params.name, params.date, params.time, ctx.session.cart, body.tickets[0], body.tickets[1], body.tickets[2])
+		console.log(ctx.session.cart)
+		//console.log(params)
+		//let entry = new cartEntry(params, body)
+		//x.add(entry)
+		//let item = ctx.session.cart
+		//console.log(item.itemlist)
+		await ctx.render('shoppingCart', { cart: ctx.session.cart })
 	} catch (err) {
 		await ctx.render('error', { message: err.messages })
 	}
@@ -275,8 +306,10 @@ router.post('/payment/:showNumber', async ctx => {
 
 		let ticketsAvailable = await tickets.ticketsAvailable(ctx.params.showNumber, body.tickets[0], body.tickets[1], body.tickets[2])
 		console.log(ticketsAvailable)
+
 		if (ticketsAvailable) {
 			//const numberOfTickets = body.tickets.reduce((acc, val) => acc + Number(val), 0)//the reduce function sums the number of tickets
+			ctx.session.cart = []
 			await ctx.render('payment', { low: body.tickets[0], medium: body.tickets[1], high: body.tickets[2], movie: movietime.movie, time: movietime.time, total: totalCost })
 		}
 		else {
