@@ -5,15 +5,39 @@
 	<meta charset="utf-8">
 </head>
 
-	<body>
-		<form  class="form" action="/shoppingCart"  method="post">
-		<p>Current items in shopping cart</p>
-		{{#each item}}
-		<p>{{item}}</p>
-		<button onclick="add(item)">Add to shopping cart</button>
-		<button onclick="decrement(item)">Decrement by one ticket</button>
-		<button onclick="remove(item)">Remove ticket</button>
+<body>
+
+	<p>Current items in shopping cart</p>
+
+	<table>
+
+		<tr>
+			<td>Movie</td>
+			<td>Date</td>
+			<td>Time</td>
+			<td>Low Tickets</td>
+			<td>Medium Tickets</td>
+			<td>High Tickets</td>
+
+		</tr>
+
+		{{#each cart}}
+
+		<tr>
+			{{#each this}}
+			<td>{{this}}</td>
+			{{/each}}
+		</tr>
+
+
 		{{/each}}
-        </form>
-	</body>
+	</table>
+	<button><a href="/paymentcart">Pay Now</a></button>
+	<button><a href="/clearall">Clear Cart</a></button>
+	<button><a href="/">Home</a></button>
+
+
+
+</body>
+
 </html>
