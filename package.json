@@ -43,6 +43,7 @@
     "sys": "0.0.1"
   },
   "devDependencies": {
+    "chai": "^4.2.0",
     "coverage": "^0.4.1",
     "dependency": "0.0.1",
     "dependency-check": "^4.1.0",
@@ -54,6 +55,7 @@
     "jscpd": "^2.0.16",
     "jsdoc": "^3.6.3",
     "jsdoc-route-plugin": "^0.1.0",
-    "markdownlint": "^0.17.0"
+    "markdownlint": "^0.17.0",
+    "mocha": "^6.2.2"
   }
 }
