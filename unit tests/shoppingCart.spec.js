@@ -12,7 +12,6 @@ describe('add()', () => {
 
 	test('adding an item to the cart', async done => {
 
-		const cart = await new Cart()
 		await cart.add('Potato')
 		console.log(cart.cart.get('Potato'))
 		const x = {'qty': 1, 'title': undefined}
