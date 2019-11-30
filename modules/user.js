@@ -22,7 +22,7 @@ module.exports = class User {
 
 	async validateEmail(email) {
 		if (email.length >= 5) {
-			if (email.indexOf("@") != 0) {
+			if (email.indexOf("@") !== 0) {
 				if (email.indexOf(".") > email.indexOf("@") && email.indexOf(".") < email.length) {
 					return true
 				}
