@@ -73,7 +73,7 @@ module.exports = class Production {
 		const extension = mime.extension(type)
 		console.log(`path: ${path}`)
 		console.log(`extension: ${extension}`)
-		await fs.copy(path, `public/img/${movie}.${extension}`)
+		await fs.copy(path, `public/img/${movie}.jpeg`)
 	}
 
 	async movieName(id) {
