@@ -29,7 +29,7 @@
 			</li>
 			<li class="navigation">
 				{{#if sessionActive}}
-				<a class="ShoppingCart" href="/shopping"><img src="img/BlackCart.png"></a>
+				<a class="ShoppingCart" href="/myCart"><img src="img/BlackCart.png"></a>
 				{{else}}
 				<a class="ShoppingCart" href="/shopping"></a>
 				{{/if}}
@@ -55,7 +55,7 @@
 		<img src="img\lion.png" class="logo" alt="images of logo" />
 
 		<h1 class="name">x Theatres</h1>
-		<p class="caption">-insert cringy slogan here xD-</p>
+		<p class="caption">The best in West Midlands </p>
 		<div class="contain1">
 			<a href="#scroll2"> <button class="contbutton1">Whats On?</button></a>
 		</div>
@@ -70,7 +70,10 @@
 
 		</tr>
 		<tr>
-			<th><img src="./img/{{this.movie}}.jpg" alt="{{this.movie}}" height="300" width="200"></th>
+			<th><img src="./img/{{this.movie}}.jpeg" alt="{{this.movie}}" height="300" width="200"></th>
+			<th>
+				{{this.plot}}
+			</th>
 		</tr>
 		<tr>
 			<th><a href="/prod/{{this.movie}}"> <button class="contbutton1">Book Now</button></a></th>
@@ -78,6 +81,7 @@
 		{{/each}}
 
 	</table>
+
 
 
 </body>

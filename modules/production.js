@@ -37,7 +37,7 @@ module.exports = class Production {
 	async showTime(movie) {
 		try {
 			sql = `SELECT * FROM showingSchedule WHERE movie = "${movie}";`
-			db.all(sql, (err, rows) => {
+			this.db.all(sql, (err, rows) => {
 				if (err) console.error(err.message)
 				if (!err) console.log(rows)
 			})
@@ -73,7 +73,7 @@ module.exports = class Production {
 		const extension = mime.extension(type)
 		console.log(`path: ${path}`)
 		console.log(`extension: ${extension}`)
-		await fs.copy(path, `public/img/${movie}.${extension}`)
+		await fs.copy(path, `public/img/${movie}.jpeg`)
 	}
 
 	async movieName(id) {

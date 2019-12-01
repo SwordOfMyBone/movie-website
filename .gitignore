@@ -1,3 +1,4 @@
+package-lock.json
 
 .DS_Store
 node_modules/
@@ -26,3 +27,9 @@ acceptance_screenshots/
 
 *.codio
 *.c9
+3
+
+
+
+package.json
+package-lock.json

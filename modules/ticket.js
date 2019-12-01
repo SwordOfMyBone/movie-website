@@ -1,6 +1,8 @@
-
 'use strict'
 const sqlite = require('sqlite-async')
+const nodemailer = require('nodemailer')
+const fs = require('fs')
+const pdf = require('pdfkit')
 
 
 module.exports = class Ticket {
@@ -19,6 +21,7 @@ module.exports = class Ticket {
 			await this.db.run(sql)
 			return this
 		})()
+
 	}
 
 
@@ -139,4 +142,130 @@ module.exports = class Ticket {
 			throw err
 		}
 	}
+
+	async emailing(name, email) {
+		const transporter = nodemailer.createTransport({
+			service: 'gmail',
+			auth: {
+				user: "noreply.xtheatres@gmail.com",
+				pass: "softwareengineering"
+			}
+		})
+
+		let mailOptions = {
+			from: 'noreply.xtheatres@gmail.com',
+			to: `${email}`, //Should be user email
+			subject: 'Your movietickets',
+			text: `Hello this is Xtheaters, see attached document`,
+			attachments: [
+				{ filename: `${name}.pdf`, path: `./pdf/${name}.pdf` }
+			]
+		}
+
+		transporter.sendMail(mailOptions, (err, data) => {
+			if (err) {
+				console.log('Error Occurs', err)
+			} else {
+				console.log('Email sent!!!')
+			}
+		})
+	}
+
+	async createPdf(name, movie, time, total, low = 0, medium = 0, high = 0) {
+		try {
+			const pdfDoc = new pdf
+			pdfDoc.pipe(fs.createWriteStream(`./pdf/${name}.pdf`))
+
+			pdfDoc.font('Times-Roman')
+				.fontSize(22)
+				.text(`Hello this is Xtheaters, this is to confirm you have booked ${movie} at ${time} with ${low} low tickets, ${medium} medium tickets and ${high} high tickets for a total cost of £${total}`)
+
+			pdfDoc.end()
+		}
+		catch (err) {
+			throw err
+		}
+	}
+
+	async cartTotal(...cart) {
+		try {
+			let total = 0
+			let sql
+			let data
+			let j = 0
+			for (let i = 0; i < cart[0].length; i++) {
+
+				sql = `SELECT ShowNumber FROM showingSchedule WHERE movie = "${cart[0][i][0]}" AND date = "${cart[0][i][1]}" AND time = "${cart[0][i][2]}";`
+				data = await this.db.get(sql)
+				sql = `SELECT LP, MP, HP FROM pricing WHERE showNumber = "${data.ShowNumber}";`
+				data = await this.db.get(sql)
+				total += ((cart[0][i][3] * data.LP) + (cart[0][i][4] * data.MP) + (cart[0][i][5] * data.HP))
+
+			}
+			console.log(total)
+			return total
+		}
+		catch (err) {
+			throw err
+		}
+	}
+
+	async cartTicketsSold(...cart) {
+		try {
+			let sql
+			let data
+			let total = 0
+			console.log(cart[0])
+			for (let i = 0; i < cart[0].length; i++) {
+				sql = `SELECT ShowNumber FROM showingSchedule WHERE movie = "${cart[0][i][0]}" AND date = "${cart[0][i][1]}" AND time = "${cart[0][i][2]}";`
+				data = await this.db.get(sql)
+
+				sql = `SELECT LP, MP, HP FROM pricing WHERE showNumber = "${data.ShowNumber}";`
+				data = await this.db.get(sql)
+				total = ((cart[0][i][3] * data.LP) + (cart[0][i][4] * data.MP) + (cart[0][i][5] * data.HP))
+				sql = `UPDATE management SET totalIncome = totalIncome + "${total}" WHERE movie ="${cart[0][i][0]}" AND time = "${cart[0][i][2]}";`
+				await this.db.run(sql)
+			}
+			return total
+		}
+		catch (err) {
+			throw err
+		}
+	}
+
+	async cartRemovalTickets(...cart) {
+		try {
+			let sql
+			let data
+			for (let i = 0; i < cart[0].length; i++) {
+				sql = `SELECT ShowNumber FROM showingSchedule WHERE movie = "${cart[0][i][0]}" AND date = "${cart[0][i][1]}" AND time = "${cart[0][i][2]}";`
+				data = await this.db.get(sql)
+				sql = `UPDATE movieTicket SET low = low - "${cart[0][i][3]}", medium = medium - "${cart[0][i][4]}", high = high - "${cart[0][i][5]}" WHERE showNumber = "${data.ShowNumber}";`
+				await this.db.run(sql)
+			}
+		}
+		catch (err) {
+			throw err
+
+		}
+	}
+
+	async createPdfCart(name, total, ...cart) {
+		try {
+			const pdfDoc = new pdf
+			pdfDoc.pipe(fs.createWriteStream(`./pdf/${name}.pdf`))
+
+			pdfDoc.font('Times-Roman')
+				.fontSize(22)
+				.text(`Hello this is Xtheaters, this is to confirm you have booked for a total cost of £${total} `)
+
+			pdfDoc.end()
+		}
+		catch (err) {
+			throw err
+		}
+
+	}
+
+
 }

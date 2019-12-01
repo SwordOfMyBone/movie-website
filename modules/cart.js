@@ -3,47 +3,58 @@ const help = require('./help')
 
 
 //Holds cart entries, which are made of tickets + qty object for each price band
-module.exports = class Cart{
-	constructor(oldCart = null){
-		if(oldCart === null){
+module.exports = class Cart {
+	constructor(oldCart = null) {
+		if (oldCart === null) {
 			this.itemlist = []
 		}
-		else{
+		else {
 			this.itemlist = oldCart.itemlist
 		}
 	}
 
-	add(cartEntry){
-		try{
-		//	if(typeof(cartEntry) !== 'object') throw Error('invalid attempt to add object into cart')
-			for(let i in this.itemlist){
-				if(help.compare(cartEntry, this.itemlist[i])){
+	add(cartEntry) {
+		try {
+			//	if(typeof(cartEntry) !== 'object') throw Error('invalid attempt to add object into cart')
+			for (let i in this.itemlist) {
+				if (help.compare(cartEntry, this.itemlist[i])) {
 					let newObj = help.entryAdd(this.itemlist[i], cartEntry)
-					this.itemlist.push(newObj)	
-					this.itemlist.splice(i,1)
+					this.itemlist.push(newObj)
+					this.itemlist.splice(i, 1)
 					return true
 				}
 			}
 			this.itemlist.push(cartEntry)
 			return true
 		}
-		catch(err){
+		catch (err) {
 			throw err
 		}
 	}
 
 
-	async get(){
+	async get() {
 		return this.itemlist
 	}
 
 
 	//removes entry
-	async remove(entry){
-		for(let i in this.itemlist){
-			if(help.compare(entry, this.itemlist[i])){
-				this.itemlist.splice(i,1)
+	async remove(entry) {
+		for (let i in this.itemlist) {
+			if (help.compare(entry, this.itemlist[i])) {
+				this.itemlist.splice(i, 1)
 			}
+		}
+	}
+
+	async addCart(movie, date, time, cart, low = 0, med = 0, high = 0) {
+		try {
+			await cart.push([movie, date, time, low, med, high])
+			return
+		}
+		catch (err) {
+			console.log("error here")
+			throw err
 		}
 	}
 }

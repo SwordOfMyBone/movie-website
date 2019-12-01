@@ -10,9 +10,7 @@ const bodyParser = require('koa-bodyparser')
 const koaBody = require('koa-body')({ multipart: true, uploadDir: '.' })
 const session = require('koa-session')
 const database = require('sqlite-async')
-//const fs = requires('fs-extra')
-//const mime = require('mime-types')
-//const jimp = require('jimp')
+const fetch = require('node-fetch')
 
 /* IMPORT CUSTOM MODULES */
 const User = require('./modules/user')
@@ -23,6 +21,7 @@ const app = new Koa()
 const router = new Router()
 const Production = require('./modules/production')
 const Ticket = require('./modules/ticket')
+
 
 /* CONFIGURING THE MIDDLEWARE */
 app.keys = ['darkSecret']
@@ -61,6 +60,14 @@ router.get('/home', async ctx => {
 		const db = await database.open(dbName)
 		const sql = 'SELECT movie FROM movies'
 		const data = await db.all(sql)
+		console.log(data.length)
+		for (let i = 0; i < data.length; i++) {
+			const fetc = await fetch(`http://www.omdbapi.com/?apikey=45e57b54&t=${data[i].movie}`, { mode: 'cors' });
+			const response = await fetc.json();
+			data[i].plot = response.Plot;
+			console.log(data[i].plot);
+		}
+		console.log("test")
 		await ctx.render('homePage', {
 			sessionActive: ctx.session.authorised,
 			movies: data
@@ -70,20 +77,45 @@ router.get('/home', async ctx => {
 	}
 })
 
-router.get('/booking', async ctx => await ctx.render('Bookingpage'))
-router.get('/myCart', async ctx => await ctx.render('shoppingCart'))
+router.get('/myCart', async ctx => await ctx.render('shoppingCart', { cart: ctx.session.cart }))
+
+router.get('/paymentcart', async ctx => {
+	try {
+		const tickets = await new Ticket(dbName)
+		let total = await tickets.cartTotal(ctx.session.cart)
+		await ctx.render('paymentcart', { cart: ctx.session.cart, total: total })
+	}
+	catch (err) {
+		throw err
+	}
+})
+
 router.post('/payment_complete', async ctx => {
 	const tickets = await new Ticket(dbName)
 	const body = ctx.request.body
-	await tickets.ticketsSold(body.movie, body.time, body.total)
-	await tickets.removalTickets(body.movie, body.time, body.low, body.medium, body.high)
+	if (ctx.session.cart === undefined || ctx.session.cart.length == 0) {
+		await tickets.ticketsSold(body.movie, body.time, body.total)
+		await tickets.removalTickets(body.movie, body.time, body.low, body.medium, body.high)
+		await tickets.createPdf(ctx.session.username, body.movie, body.time, body.total, body.low, body.medium, body.high)
+		await tickets.emailing(ctx.session.username, ctx.session.email)
+	}
+	else {
+		let total = await tickets.cartTotal(ctx.session.cart)
+		await tickets.cartTicketsSold(ctx.session.cart)
+		await tickets.cartRemovalTickets(ctx.session.cart)
+		await tickets.createPdfCart(ctx.session.username, total, ctx.session.cart)
+		await tickets.emailing(ctx.session.username, ctx.session.email)
+	}
+
+	ctx.session.cart = []
+
 
 	await ctx.render('payment_complete')
 })
+
 router.get('/cart', async ctx => await ctx.render('shoppingCart'))
->>>>>>> cbc87714e5d2c72e1a074838bcb3d8d5b3f65e92
+
 router.get('/support', async ctx => await ctx.render('support', { sessionActive: ctx.session.authorised }))
-//router.get('/production', async ctx => await ctx.render("production"))
 
 /**
  * Secure logout
@@ -95,10 +127,27 @@ router.get('/support', async ctx => await ctx.render('support', { sessionActive:
 router.get('/logout', async ctx => {
 	ctx.session.authorised = null
 	ctx.session.username = null
-	ctx.session.cart = null
+	ctx.session.cart = []
+	ctx.session.email = null
 	ctx.redirect('/home')
 })
 
+/**
+ * Clears cart
+ *
+ * @name Clear
+ * @route {GET} /
+ * @authentication This route requires cookie-based authentication.
+ */
+router.get('/clearall', async ctx => {
+	try {
+		ctx.session.cart = []
+		await ctx.redirect('/')
+	}
+	catch (err) {
+
+	}
+})
 
 /**
  * The secure home page.
@@ -107,17 +156,11 @@ router.get('/logout', async ctx => {
  * @route {GET} /
  * @authentication This route requires cookie-based authentication.
  */
+
+//Redirects to home
 router.get('/', async ctx => {
 	try {
 		await ctx.redirect('/home')
-		/* } catch (err) {
-			await ctx.render('error', { message: err.message })
-			//if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
-			const data = {}
-			if (ctx.query.msg) data.msg = ctx.query.msg
-			console.log(ctx.session.authorised)
-			await ctx.render('homePage') */
-		// wasn't sure which version we keep
 	} catch (err) {
 		await ctx.render('error', { message: err.message })
 	}
@@ -149,18 +192,25 @@ router.post('/register', koaBody, async ctx => {
 			body.expiry.length !== 0 &&
 			body['security code'].length !== 0
 		) {
-			await user.register(body.user, body.pass, body['card number'], body.expiry, body['security code'])
+			await user.register(body.user, body.pass, body.email, body['card number'], body.expiry, body['security code'])
 		} else {
-			await user.register(body.user, body.pass)
+			await user.register(body.user, body.pass, body.email)
 		}
 		console.log(ctx.request.files.avatar)
-		await user.uploadPicture(ctx.request.files.avatar, body.user)
+		let picPath = await user.uploadPicture(ctx.request.files.avatar, body.user)
+		ctx.session.picPath = picPath
 		ctx.redirect(`/?msg=new user "${body.name}" added`) // redirect to the home page
 	} catch (err) {
 		await ctx.render('error', { message: err.message })
 	}
 })
 
+/**
+ * The secure login page
+ *
+ * @name Login Page
+ * @route {GET} /
+ */
 
 router.get('/login', async ctx => {
 	const data = {}
@@ -170,6 +220,13 @@ router.get('/login', async ctx => {
 })
 
 
+/**
+ * The secure login.
+ *
+ * @name Page
+ * @route {POST} /
+ * @authentication This route requires cookie-based authentication.
+ */
 router.post('/login', async ctx => {
 	try {
 		const body = ctx.request.body
@@ -177,7 +234,10 @@ router.post('/login', async ctx => {
 		await user.login(body.user, body.pass)
 		ctx.session.authorised = true
 		ctx.session.username = body.user
-		ctx.session.cart = new Cart()
+		const data = await user.getEmail(body.user)
+		ctx.session.email = data.email
+		ctx.session.cart = []
+
 		return ctx.redirect('/?msg=you are now logged in...', body.user)
 	} catch (err) {
 		await ctx.render('error', { message: err.message })
@@ -185,12 +245,16 @@ router.post('/login', async ctx => {
 })
 
 
-
+/**
+ * The tickets page.
+ *
+ * @name Tickets
+ * @route {GET} /
+ * 
+ */
 router.get('/tickets/:movie/:date/:time', async ctx => {
 	try {
 		const ticket = await new Ticket(dbName)
-		//await ticket.addToDb('1', 'Avatar', '40')
-		//let sql = `SELECT ShowNumber FROM showingSchedule WHERE movie LIKE "%${ctx.params.movie}%" AND date LIKE "%${ctx.params.date}%" AND time LIKE "%${ctx.params.time}%";`
 		const db = await database.open(dbName)
 		const data = await ticket.showNumber(ctx.params.movie, ctx.params.date, ctx.params.time)
 		console.log(data)
@@ -198,12 +262,8 @@ router.get('/tickets/:movie/:date/:time', async ctx => {
 		const data1 = await db.get(sql)
 		console.log(data1)
 		let totalTickets = data1.low + data1.medium + data1.high
-		//console.log(ctx.params.date)
 		await db.close()
 		let tick = await ticket.pricePerTicket(data)
-		/*const low_priced = await ticket.getBands(ctx.params.movie, ctx.params.date, ctx.params.time, 'low')
-		const medium_priced = await ticket.getBands(ctx.params.movie, ctx.params.date, ctx.params.time, 'medium')
-		const high_priced = await ticket.getBands(ctx.params.movie, ctx.params.date, ctx.params.time, 'high') */
 		await ctx.render('ticketsAvailable', { tickets: totalTickets, movie: ctx.params.movie, lowTickets: data1.low, mediumTickets: data1.medium, highTickets: data1.high, params: ctx.params, showNumber: data, LP: tick.LP, MP: tick.MP, HP: tick.HP })
 
 	} catch (err) {
@@ -214,7 +274,6 @@ router.get('/tickets/:movie/:date/:time', async ctx => {
 router.post('/tickets/:movie', async ctx => {
 	try {
 		const body = ctx.request.body
-		// console.log(ctx.params.movie)
 		await ctx.render('ticketsAvailable', body)
 	} catch (err) {
 		await ctx.render('error', { message: err.messages })
@@ -227,12 +286,14 @@ router.post('/cart/:name/:date/:time', async ctx => {
 		const body = ctx.request.body
 		const params = ctx.params
 		console.log(body)
-		console.log(params)
-		let entry = new cartEntry(params, body)
-		x.add(entry)
-		let item = ctx.session.cart
-		console.log(item.itemlist) 
-		await ctx.render('shoppingCart', {item:item.itemlist})
+		console.log(body.tickets[0])
+		console.log(body.tickets[0])
+		console.log(body.tickets[0])
+		console.log(params.date)
+		console.log(ctx.session.cart)
+		await x.addCart(params.name, params.date, params.time, ctx.session.cart, body.tickets[0], body.tickets[1], body.tickets[2])
+		console.log(ctx.session.cart)
+		await ctx.render('shoppingCart', { cart: ctx.session.cart })
 	} catch (err) {
 		await ctx.render('error', { message: err.messages })
 	}
@@ -267,8 +328,10 @@ router.post('/payment/:showNumber', async ctx => {
 
 		let ticketsAvailable = await tickets.ticketsAvailable(ctx.params.showNumber, body.tickets[0], body.tickets[1], body.tickets[2])
 		console.log(ticketsAvailable)
+
 		if (ticketsAvailable) {
 			//const numberOfTickets = body.tickets.reduce((acc, val) => acc + Number(val), 0)//the reduce function sums the number of tickets
+			ctx.session.cart = []
 			await ctx.render('payment', { low: body.tickets[0], medium: body.tickets[1], high: body.tickets[2], movie: movietime.movie, time: movietime.time, total: totalCost })
 		}
 		else {
@@ -279,44 +342,6 @@ router.post('/payment/:showNumber', async ctx => {
 	}
 })
 
-router.get('/production', async ctx => {
-	try {
-		const db = await database.open(dbName)
-		const sql = 'SELECT movie FROM movies;'
-		const data = await db.all(sql)
-		console.log(data)
-		await ctx.render('Production', { movies: data })
-	} catch (err) {
-		ctx.body = err.message
-	}
-})
-
-
-
-
-/*
-// semi complete, pushing because i wanna switch devices
-
-
-router.get('/production', async ctx => {
-	try {
-		//const production = await new Production(dbName)
-		if (ctx.session.authorised !== true) {
-			ctx.redirect('/login')
-
-		} else {
-			console.log(true)
-			await ctx.render('Production', {
-				sessionActive: ctx.session.authorised,//movies: data
-			})
-		}
-	} catch (err) {
-		await ctx.render('login', { message: err.message })
-	} // Will check if the session is open then it will direct the user
-	//to production, if session isn't open it will ask the user to log in
-})
-
-
 /**
  * The My Profile page displays user info
  *
@@ -324,7 +349,8 @@ router.get('/production', async ctx => {
  * @route {GET} /myprofile
  */
 router.get('/myprofile', async ctx => {// show logged in users info
-	const picture = `./avatars/${ctx.session.username}.png`
+	const picture = ctx.session.picPath
+	console.log(picture)
 	const user = await new User(dbName)
 	const data = await user.isAdmin(ctx.session.username, dbName)
 	const data1 = await user.movieIncome()
@@ -332,7 +358,7 @@ router.get('/myprofile', async ctx => {// show logged in users info
 	console.log(data1)
 	await ctx.render('myprofile', {
 		sessionActive: ctx.session.authorised,
-		name: ctx.session.username, imgUrl: picture, admin: data, income: data1
+		name: ctx.session.username, imgUrl: picture, admin: data, income: data1, email: ctx.session.email
 	})
 })
 
