@@ -1,6 +1,7 @@
 // eslint-disable-next-line strict
 const puppeteer = require('puppeteer') //module used for acceptance testing
 //const { configureToMatchImageSnapshot } = require('jest-image-snapshot')
+const expect = require('expect');
 
 const width = 1920 //setting the default width
 const height = 1080 //setting the default height
@@ -17,10 +18,12 @@ if (!fs.existsSync(dir)) {
 	const page = await browser.newPage()
 	const navigationPromise = page.waitForNavigation() //helps page reloas after the navigation has finished
 	await page.setViewport({ width, height })
-	await page.goto('http://localhost:8080') //goes to the default homepage
-	await page.screenshot({path: 'acceptance_screenshots/homepage.png'}) //screenshots the page and saves it in the acceptance_screenshots folder
+    await page.goto('http://localhost:8080') //goes to the default homepage
+    
+    const title = await page.title()
+	await expect(title).toBe('Theater Bookings') //test out the title of the homepage
 
-	await page.goto('http://localhost:8080/home')
+	await page.screenshot({path: 'acceptance_screenshots/homepage.png'}) //screenshots the page and saves it in the acceptance_screenshots folder
 
 	await page.waitForSelector('body > .home > .contain1 > a > .contbutton1')
 	await page.click('body > .home > .contain1 > a > .contbutton1') //scrolls down the homepage while no database is in use
@@ -54,13 +57,15 @@ if (!fs.existsSync(dir)) {
 	await page.type('body > .form > fieldset > p:nth-child(3) > input', '67896')
 	await page.type('body > .form > p:nth-child(4) > input', '')
 	await page.waitForSelector('body > .form > p:nth-child(5) > input')
-	await page.click('body > .form > p:nth-child(5) > input')
-	await page.screenshot({path: 'acceptance_screenshots/register_result.png'}) //screenshots the result after registering a new user with full card details
+	await page.click('body > .form > p:nth-child(5) > input') //after completing the form it submits it 
+    await page.screenshot({path: 'acceptance_screenshots/register_result.png'}) //screenshots the result after registering a new user with full card details
 	await navigationPromise
 
 	await page.goto('http://localhost:8080')
 	await page.waitForSelector('body > nav > ul > .navigation:nth-child(3) > .navbar')
-	await page.click('body > nav > ul > .navigation:nth-child(3) > .navbar')
+    await page.click('body > nav > ul > .navigation:nth-child(3) > .navbar')
+    const titleContact = await page.title()
+	await expect(titleContact).toBe('Support Page')
 	await page.screenshot({path: 'acceptance_screenshots/contact.png'})
 	await navigationPromise
 
