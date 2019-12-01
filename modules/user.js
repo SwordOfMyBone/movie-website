@@ -53,7 +53,7 @@ module.exports = class User {
 							if (data.records !== 0) throw new Error(`username "${user}" already in use`)
 							pass = await bcrypt.hash(pass, saltRounds)
 
-							sql = `INSERT INTO users(user, pass, email) VALUES("${user}", "${pass}", "${email});`
+							sql = `INSERT INTO users(user, pass, email) VALUES("${user}", "${pass}", "${email}");`
 							await this.db.run(sql)
 							sql = `SELECT * FROM users WHERE user="${user}";`
 							let id = ''
@@ -101,6 +101,7 @@ module.exports = class User {
 		console.log(`path: ${path}`)
 		console.log(`extension: ${extension}`)
 		await fs.copy(path, `public/avatars/${username}.${extension}`)
+		return `avatars/${username}.${extension}`
 	}
 
 	async login(username, password) {
