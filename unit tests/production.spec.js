@@ -16,11 +16,12 @@ describe('createShow()',()=>{
 	})
 })
 describe('movieName()',()=>{
-	test('Select details of a movie', async done()=>{
+	test('Select details of a movie', async done =>{
 		expect.assertions(1)
 		prod = await new Production()
 		await prod.movieName('1')
 		expect(prod).toBe(true)
+		done()
 	})
 })
 
