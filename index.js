@@ -10,9 +10,7 @@ const bodyParser = require('koa-bodyparser')
 const koaBody = require('koa-body')({ multipart: true, uploadDir: '.' })
 const session = require('koa-session')
 const database = require('sqlite-async')
-//const fs = requires('fs-extra')
-//const mime = require('mime-types')
-//const jimp = require('jimp')
+const fetch = require('node-fetch')
 
 /* IMPORT CUSTOM MODULES */
 const User = require('./modules/user')
@@ -23,7 +21,7 @@ const app = new Koa()
 const router = new Router()
 const Production = require('./modules/production')
 const Ticket = require('./modules/ticket')
-//const mailing = require('./EmailSender')
+
 
 /* CONFIGURING THE MIDDLEWARE */
 app.keys = ['darkSecret']
@@ -62,6 +60,14 @@ router.get('/home', async ctx => {
 		const db = await database.open(dbName)
 		const sql = 'SELECT movie FROM movies'
 		const data = await db.all(sql)
+		console.log(data.length)
+		for (let i = 0; i < data.length; i++) {
+			const fetc = await fetch(`http://www.omdbapi.com/?apikey=45e57b54&t=${data[i].movie}`, { mode: 'cors' });
+			const response = await fetc.json();
+			data[i].plot = response.Plot;
+			console.log(data[i].plot);
+		}
+		console.log("test")
 		await ctx.render('homePage', {
 			sessionActive: ctx.session.authorised,
 			movies: data
@@ -71,8 +77,8 @@ router.get('/home', async ctx => {
 	}
 })
 
-router.get('/booking', async ctx => await ctx.render('Bookingpage'))
 router.get('/myCart', async ctx => await ctx.render('shoppingCart', { cart: ctx.session.cart }))
+
 router.get('/paymentcart', async ctx => {
 	try {
 		const tickets = await new Ticket(dbName)
@@ -83,6 +89,7 @@ router.get('/paymentcart', async ctx => {
 		throw err
 	}
 })
+
 router.post('/payment_complete', async ctx => {
 	const tickets = await new Ticket(dbName)
 	const body = ctx.request.body
@@ -91,7 +98,6 @@ router.post('/payment_complete', async ctx => {
 		await tickets.removalTickets(body.movie, body.time, body.low, body.medium, body.high)
 		await tickets.createPdf(ctx.session.username, body.movie, body.time, body.total, body.low, body.medium, body.high)
 		await tickets.emailing(ctx.session.username, ctx.session.email)
-
 	}
 	else {
 		let total = await tickets.cartTotal(ctx.session.cart)
@@ -106,9 +112,8 @@ router.post('/payment_complete', async ctx => {
 
 	await ctx.render('payment_complete')
 })
-router.get('/cart', async ctx => await ctx.render('shoppingCart'))
+
 router.get('/support', async ctx => await ctx.render('support', { sessionActive: ctx.session.authorised }))
-//router.get('/production', async ctx => await ctx.render("production"))
 
 /**
  * Secure logout
@@ -125,6 +130,13 @@ router.get('/logout', async ctx => {
 	ctx.redirect('/home')
 })
 
+/**
+ * Clears cart
+ *
+ * @name Clear
+ * @route {GET} /
+ * @authentication This route requires cookie-based authentication.
+ */
 router.get('/clearall', async ctx => {
 	try {
 		ctx.session.cart = []
@@ -142,17 +154,11 @@ router.get('/clearall', async ctx => {
  * @route {GET} /
  * @authentication This route requires cookie-based authentication.
  */
+
+//Redirects to home
 router.get('/', async ctx => {
 	try {
 		await ctx.redirect('/home')
-		/* } catch (err) {
-			await ctx.render('error', { message: err.message })
-			//if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
-			const data = {}
-			if (ctx.query.msg) data.msg = ctx.query.msg
-			console.log(ctx.session.authorised)
-			await ctx.render('homePage') */
-		// wasn't sure which version we keep
 	} catch (err) {
 		await ctx.render('error', { message: err.message })
 	}
@@ -197,6 +203,12 @@ router.post('/register', koaBody, async ctx => {
 	}
 })
 
+/**
+ * The secure login page
+ *
+ * @name Login Page
+ * @route {GET} /
+ */
 
 router.get('/login', async ctx => {
 	const data = {}
@@ -206,6 +218,13 @@ router.get('/login', async ctx => {
 })
 
 
+/**
+ * The secure login.
+ *
+ * @name Page
+ * @route {POST} /
+ * @authentication This route requires cookie-based authentication.
+ */
 router.post('/login', async ctx => {
 	try {
 		const body = ctx.request.body
@@ -224,7 +243,13 @@ router.post('/login', async ctx => {
 })
 
 
-
+/**
+ * The tickets page.
+ *
+ * @name Tickets
+ * @route {GET} /
+ * 
+ */
 router.get('/tickets/:movie/:date/:time', async ctx => {
 	try {
 		const ticket = await new Ticket(dbName)
@@ -247,7 +272,6 @@ router.get('/tickets/:movie/:date/:time', async ctx => {
 router.post('/tickets/:movie', async ctx => {
 	try {
 		const body = ctx.request.body
-		// console.log(ctx.params.movie)
 		await ctx.render('ticketsAvailable', body)
 	} catch (err) {
 		await ctx.render('error', { message: err.messages })
@@ -267,11 +291,6 @@ router.post('/cart/:name/:date/:time', async ctx => {
 		console.log(ctx.session.cart)
 		await x.addCart(params.name, params.date, params.time, ctx.session.cart, body.tickets[0], body.tickets[1], body.tickets[2])
 		console.log(ctx.session.cart)
-		//console.log(params)
-		//let entry = new cartEntry(params, body)
-		//x.add(entry)
-		//let item = ctx.session.cart
-		//console.log(item.itemlist)
 		await ctx.render('shoppingCart', { cart: ctx.session.cart })
 	} catch (err) {
 		await ctx.render('error', { message: err.messages })
@@ -320,44 +339,6 @@ router.post('/payment/:showNumber', async ctx => {
 		err.message
 	}
 })
-
-router.get('/production', async ctx => {
-	try {
-		const db = await database.open(dbName)
-		const sql = 'SELECT movie FROM movies;'
-		const data = await db.all(sql)
-		console.log(data)
-		await ctx.render('Production', { movies: data })
-	} catch (err) {
-		ctx.body = err.message
-	}
-})
-
-
-
-
-/*
-// semi complete, pushing because i wanna switch devices
-
-
-router.get('/production', async ctx => {
-	try {
-		//const production = await new Production(dbName)
-		if (ctx.session.authorised !== true) {
-			ctx.redirect('/login')
-
-		} else {
-			console.log(true)
-			await ctx.render('Production', {
-				sessionActive: ctx.session.authorised,//movies: data
-			})
-		}
-	} catch (err) {
-		await ctx.render('login', { message: err.message })
-	} // Will check if the session is open then it will direct the user
-	//to production, if session isn't open it will ask the user to log in
-})
-
 
 /**
  * The My Profile page displays user info
