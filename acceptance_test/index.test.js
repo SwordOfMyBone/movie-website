@@ -47,8 +47,8 @@ if (!fs.existsSync(dir)) {
 	await page.waitForSelector('body > .form > p:nth-child(1) > input')
 	await page.click('body > .form > p:nth-child(1) > input')
 
-	await page.type('body > .form > p:nth-child(1) > input', 'this') //inputs data on the register page
-	await page.type('body > .form > p:nth-child(2) > input', 'this')
+	await page.type('body > .form > p:nth-child(1) > input', 'example') //inputs data on the register page
+	await page.type('body > .form > p:nth-child(2) > input', 'example')
 	await page.type('body > .form > fieldset > p:nth-child(1) > input', '6789678')
 	await page.type('body > .form > fieldset > p:nth-child(2) > input', '0869-07-06')
 	await page.type('body > .form > fieldset > p:nth-child(3) > input', '67896')
