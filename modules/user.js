@@ -101,6 +101,7 @@ module.exports = class User {
 		console.log(`path: ${path}`)
 		console.log(`extension: ${extension}`)
 		await fs.copy(path, `public/avatars/${username}.${extension}`)
+		return `avatars/${username}.${extension}`
 	}
 
 	async login(username, password) {

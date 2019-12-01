@@ -189,7 +189,8 @@ router.post('/register', koaBody, async ctx => {
 			await user.register(body.user, body.pass, body.email)
 		}
 		console.log(ctx.request.files.avatar)
-		await user.uploadPicture(ctx.request.files.avatar, body.user)
+		let picPath = await user.uploadPicture(ctx.request.files.avatar, body.user)
+		ctx.session.picPath = picPath
 		ctx.redirect(`/?msg=new user "${body.name}" added`) // redirect to the home page
 	} catch (err) {
 		await ctx.render('error', { message: err.message })
@@ -365,7 +366,8 @@ router.get('/production', async ctx => {
  * @route {GET} /myprofile
  */
 router.get('/myprofile', async ctx => {// show logged in users info
-	const picture = `./avatars/${ctx.session.username}.png`
+	const picture = ctx.session.picPath
+	console.log(picture)
 	const user = await new User(dbName)
 	const data = await user.isAdmin(ctx.session.username, dbName)
 	const data1 = await user.movieIncome()
