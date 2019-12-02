@@ -22,19 +22,19 @@ body {
 }
    
 nav {
-    overflow: hidden;
-    position: fixed;
-    background: black;
-    top: 0px;
-    width: 100%;
-    left: 0px;
-    padding-bottom: 2px;
-    transition: color 1s;
-  }
-  
-  .navbar:hover {
-    color: orange;
-  }
+  overflow: hidden;
+  position: fixed;
+  background: black;
+  top: 0px;
+  width: 100%;
+  left: 0px;
+  padding-bottom: 2px;
+  transition: color 1s;
+}
+
+.navbar:hover {
+  color: orange;
+}
   
   .navigation1 {
     text-align: center;
